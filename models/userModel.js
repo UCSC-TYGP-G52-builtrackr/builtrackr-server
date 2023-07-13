@@ -1,7 +1,7 @@
 import { query } from '../config/db.js'
 import bcrypt from 'bcrypt'
 import asyncHandler from 'express-async-handler'
-import multer from 'multer'
+import { upload } from '../utils/multer.js'
 
 const userExists = async (email) => {
     try {
@@ -31,10 +31,10 @@ const userExists = async (email) => {
   
   // register a new company
   const regUser = asyncHandler(async (email, name, regNo, line1, line2, contactNo,certificate,username,password) => {
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
 
-    const upload = multer({ dest: '../../client/src/uploads' });
+    const salt = await bcrypt.genSalt(10)
+    console.log(certificate,password,username);
+    const hashedPassword = await bcrypt.hash(password, salt)
 
     
   

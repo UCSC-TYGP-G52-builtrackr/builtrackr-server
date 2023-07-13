@@ -52,6 +52,7 @@ userRouter.post('/sendotp',(req,res)=>{
 userRouter.post('/verifyotp',(req,res)=>{
     let otprecived = req.body.otp;
     let email = req.body.email;
+    console.log(otprecived);
     if (savedOTPS[email] == otprecived) {
         res.send("Verfied");
     }

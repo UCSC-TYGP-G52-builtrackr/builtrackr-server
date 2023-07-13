@@ -10,3 +10,10 @@ Create table users (
 	user_name varchar(255),
 	password varchar (255)
 );
+
+Create table tasks (
+	task_id SERIAL PRIMARY KEY,
+	taskName varchar(255),
+	specialInformation varchar(255),
+	dueDate date,
+);
