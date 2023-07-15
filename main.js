@@ -6,8 +6,65 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 connectDB(); 
+//gineth
 app.use('/api/user', userRouter);
 app.use('/api/task', taskRouter);
+
+
+
+
+
+
+
+
+//govindani
+
+
+
+
+
+
+
+
+
+//nilshan
+
+
+
+
+
+
+
+
+
+//chamodi
+
+
+
+
+
+
+
+
+
+//sadun
+
+
+
+
+
+
+
+
+
+//rumindu
+
+
+
+
+
+
+
 
 
 
