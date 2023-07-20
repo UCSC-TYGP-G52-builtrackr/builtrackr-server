@@ -1,4 +1,6 @@
 import { addTask,getAllTasks } from "../models/taskModel.js"
+//simple middleware  for handling exceptions inside of async express root
+//and passing them to ur express error handler
 import asyncHandler from 'express-async-handler'
 
 
