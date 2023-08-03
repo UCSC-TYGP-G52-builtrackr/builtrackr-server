@@ -42,15 +42,13 @@ const regUser = asyncHandler(
     password
   ) => {
     const salt = await bcrypt.genSalt(10);
-    console.log(certificate, password, username);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const createUserQuery =
-      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) RETURNING company_id, company_name, company_email";
+    
     const createUser = await query(createUserQuery, [
       name,
       regNo,
-      certificate.name,
+      'nameofphoto',
       email,
       line1,
       line2,

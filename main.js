@@ -1,5 +1,6 @@
 import {app} from './core/init.js';
 import {userRouter} from './api/user.js';
+import { employeeRouter } from './api/employee.js';
 import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -28,7 +29,7 @@ app.use('/api/user', userRouter);
 
 
 //nilshan
-
+app.use('/api/employee',employeeRouter)
 
 
 
