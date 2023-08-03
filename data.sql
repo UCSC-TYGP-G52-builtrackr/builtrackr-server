@@ -17,3 +17,4 @@ Create table tasks (
 	specialInformation varchar(255),
 	dueDate date,
 );
+
