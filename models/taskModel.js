@@ -23,6 +23,18 @@ const getAllTasks = async () => {
     }
 }
 
-export { addTask,getAllTasks }
+const deleteTask = async (id) => {
+    try {
+        const deleteTaskQuery = 'DELETE FROM tasks WHERE task_id = $1 RETURNING task_id, taskname, specialinformation, duedate'
+        const queryResult = await query(deleteTaskQuery, [id])
+        return queryResult.rows[0]
+    } catch (error) {
+        console.error(`Error deleting task: ${error.message}`)
+        throw new Error(error.message)
+    }
+}
+
+
+export { addTask,getAllTasks,deleteTask}
 
 
