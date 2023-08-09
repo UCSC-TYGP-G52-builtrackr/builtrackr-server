@@ -1,15 +1,22 @@
 import {app} from './core/init.js';
 import {userRouter} from './api/user.js';
 import { employeeRouter } from './api/employee.js';
+import {taskRouter} from './api/task.js';
+import {siteManagerRouter} from './api/sitemanger.js';
+import {uploadRouter} from './api/upload.js';
 import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
-dotenv.config()
 
+// import { paymentRouter } from './api/payment.js';
+dotenv.config()
 connectDB(); 
+
 //gineth
 app.use('/api/user', userRouter);
-// app.use('/api/task', taskRouter);
-// app.use('/api/card' ,)
+app.use('/api/task', taskRouter);
+app.use('/api/sitemanager', siteManagerRouter);
+app.use('/api/upload', uploadRouter);
+// app.use('/api/payment', paymentRouter);
 
 
 

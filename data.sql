@@ -60,3 +60,4 @@ CREATE TABLE employee (
 	company_id int,
 	FOREIGN KEY (company_id) REFERENCES users(company_id)
 );
+
