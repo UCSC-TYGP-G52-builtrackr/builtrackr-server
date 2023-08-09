@@ -1,5 +1,6 @@
 import {app} from './core/init.js';
 import {userRouter} from './api/user.js';
+import { employeeRouter } from './api/employee.js';
 import {taskRouter} from './api/task.js';
 import {siteManagerRouter} from './api/sitemanger.js';
 import {uploadRouter} from './api/upload.js';
@@ -35,7 +36,7 @@ app.use('/api/upload', uploadRouter);
 
 
 //nilshan
-
+app.use('/api/employee',employeeRouter)
 
 
 
