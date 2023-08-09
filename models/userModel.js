@@ -20,8 +20,8 @@ const loginUser = asyncHandler(async (email, password) => {
   const userDetails = await query(userDetailsQuery, [email]);
   if (userDetails.rowCount > 0) {
     const user = userDetails.rows[0];
-    // const matchPassword = await bcrypt.compare(password, user.password);
-    const matchPassword = user.password === password
+    const matchPassword = await bcrypt.compare(password, user.password);
+    // const matchPassword = user.password === password;
 
     return matchPassword ? user : false;
   } else {
@@ -45,6 +45,9 @@ const regUser = asyncHandler(
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const createUserQuery =
+      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) RETURNING company_id, company_name, company_email";
+
     const createUser = await query(createUserQuery, [
       name,
       regNo,
@@ -58,7 +61,7 @@ const regUser = asyncHandler(
     ]);
     if (createUser.rowCount > 0) {
       // Upload file
-      upload.single(certificate);
+      // upload.single(certificate);
       return createUser.rows[0];
     } else {
       throw new Error("Internal Error");
