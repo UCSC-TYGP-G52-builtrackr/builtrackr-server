@@ -48,4 +48,31 @@ const addEmployee = async (
   }
 };
 
-export { addEmployee };
+const authEmployee = async(email,password) =>{
+  const employeeDetailsQuery = "SELECT * FROM employee WHERE email = $1";
+  const employeeDetails = await query(employeeDetailsQuery, [email]);
+  if (employeeDetails.rowCount > 0) {
+    const employee = employeeDetails.rows[0];
+    const matchPassword = await bcrypt.compare(password, employee.password);
+
+    return matchPassword ? employee : false;
+  } else {
+    throw new Error("Email does not exist");
+  }
+}
+
+const getEmployeesByType = async(id,type) => {
+  const employeeDetailsQuery = "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
+  try {
+    const employeeDetails = await query (employeeDetailsQuery, [id,type])
+    if (employeeDetails.rowCount > 0) {
+      return employeeDetails.rows;
+    } else {
+      throw new Error("No employee records");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+}
+
+export { addEmployee,authEmployee,getEmployeesByType };

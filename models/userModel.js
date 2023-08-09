@@ -20,7 +20,8 @@ const loginUser = asyncHandler(async (email, password) => {
   const userDetails = await query(userDetailsQuery, [email]);
   if (userDetails.rowCount > 0) {
     const user = userDetails.rows[0];
-    const matchPassword = await bcrypt.compare(password, user.password);
+    // const matchPassword = await bcrypt.compare(password, user.password);
+    const matchPassword = user.password === password
 
     return matchPassword ? user : false;
   } else {
@@ -44,11 +45,10 @@ const regUser = asyncHandler(
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    
     const createUser = await query(createUserQuery, [
       name,
       regNo,
-      'nameofphoto',
+      "nameofphoto",
       email,
       line1,
       line2,
@@ -103,11 +103,11 @@ const getUserFromToken = asyncHandler(async (userId) => {
   }
 });
 
-const addeUserRole = asyncHandler(async (name, photo, id) => {
+const addeUserRole = asyncHandler(async (name, type, id) => {
   try {
     const createQuery =
-      "INSERT INTO user_roles (role_name, photo_path, company_id) VALUES ($1, $2, $3) RETURNING role_id";
-    const result = await query(createQuery, [name, photo, id]);
+      "INSERT INTO user_roles (role_name, company_id, type) VALUES ($1, $2, $3) RETURNING role_id";
+    const result = await query(createQuery, [name, id, type]);
     return result.rows[0];
   } catch (err) {
     throw new Error("Internal error");
