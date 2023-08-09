@@ -12,6 +12,7 @@ const addTask = async (taskName,specialInformation,dueDate) => {
     }
 }
 
+
 const getAllTasks = async () => {
     try {
         const viewTaskQuery = 'SELECT * FROM tasks'
