@@ -3,6 +3,7 @@ const { Pool } = pkg
 import dotenv from 'dotenv'
 dotenv.config()
 
+//database connection object
 const pool = new Pool({
   user: process.env.DB_USERNAME,
   host: process.env.DB_HOST,

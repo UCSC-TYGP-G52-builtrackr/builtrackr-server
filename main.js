@@ -5,15 +5,15 @@ import {siteManagerRouter} from './api/sitemanger.js';
 import {uploadRouter} from './api/upload.js';
 import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
-dotenv.config()
 
+dotenv.config()
 connectDB(); 
+
 //gineth
 app.use('/api/user', userRouter);
 app.use('/api/task', taskRouter);
 app.use('/api/sitemanager', siteManagerRouter);
 app.use('/api/upload', uploadRouter);
-
 
 
 
@@ -77,3 +77,6 @@ const port = process.env.PORT
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`)
 })
+
+
+//axios use to get and post data
