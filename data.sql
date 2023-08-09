@@ -44,3 +44,4 @@ INSERT INTO privileges (privilege) VALUES
 	('Remove Tasks'),
 	('Upload Documents'),
 	('Request Inventory');
+
