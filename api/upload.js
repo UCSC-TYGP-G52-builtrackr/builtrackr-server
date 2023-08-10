@@ -23,6 +23,7 @@ uploadRouter.post('', upload.single('document'), (req, res) => {
 uploadRouter.get('/getpdfs', (req, res) => {
     // get all the files inside upload folder
     const directoryPath = path.join(__dirname, '/uploads');
+    console.log(directoryPath);
     fs.readdir(directoryPath, function (err, files) {
         if (err) {
             console.log(err);
@@ -33,6 +34,7 @@ uploadRouter.get('/getpdfs', (req, res) => {
         files.forEach((file) => {
             imageInfo.push({
                 name: file,
+                
             });
         }
         );

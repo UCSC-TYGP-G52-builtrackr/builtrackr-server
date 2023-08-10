@@ -17,3 +17,47 @@ Create table tasks (
 	specialInformation varchar(255),
 	dueDate date,
 );
+
+CREATE TABLE user_roles (
+	role_id SERIAL PRIMARY KEY,
+	role_name VARCHAR (255),
+	photo_path VARCHAR (255)
+);
+CREATE TABLE role_privileges (
+    no INTEGER GENERATED ALWAYS AS IDENTITY,
+    role_id INTEGER,
+    privilege VARCHAR(255),
+    PRIMARY KEY (role_id, privilege),
+    FOREIGN KEY (role_id) REFERENCES user_roles(role_id)
+);
+CREATE TABLE priviliges (
+	no SERIAL PRIMARY KEY,
+	privilege varchar (255)
+);
+INSERT INTO privileges (privilege) VALUES 
+	('Create user Profile'),
+  	('Create Siets'),
+  	('Add Task'),
+  	('Assign labourars'),
+	('Review Task'),
+	('Decline Task'),
+	('Remove Tasks'),
+	('Upload Documents'),
+	('Request Inventory');
+
+CREATE TABLE employee (
+	no SERIAL PRIMARY KEY,
+	f_name VARCHAR (50),
+	l_name VARCHAR (50),
+	nic varchar (12),
+	tel_no varchar (10),
+	id varchar (50),
+	email VARCHAR (50),
+	address varchar (100),
+	dob DATE,
+	register_date DATE,
+	password varchar (255),
+	company_id int,
+	FOREIGN KEY (company_id) REFERENCES users(company_id)
+);
+
