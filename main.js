@@ -1,5 +1,6 @@
 import {app} from './core/init.js';
 import {userRouter} from './api/user.js';
+import { siteRouter } from './api/site.js';
 import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -38,7 +39,7 @@ app.use('/api/user', userRouter);
 
 
 //chamodi
-
+app.use('/api/site',siteRouter);
 
 
 
