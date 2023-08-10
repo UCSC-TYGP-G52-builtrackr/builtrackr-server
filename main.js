@@ -6,6 +6,12 @@ import {siteManagerRouter} from './api/sitemanger.js';
 import {uploadRouter} from './api/upload.js';
 import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
+import { cardRouter } from './api/card.js';
+import { dropRouter } from './api/drop.js';
+import { uploadRouter } from './api/upload.js';
+
+dotenv.config()
+
 
 // import { paymentRouter } from './api/payment.js';
 dotenv.config()
@@ -27,9 +33,8 @@ app.use('/api/upload', uploadRouter);
 
 //govindani
 
-
-
-
+app.use('/api/card', cardRouter);
+app.use('/api/drop', dropRouter);
 
 
 
@@ -66,7 +71,6 @@ app.use('/api/employee',employeeRouter)
 
 
 //rumindu
-
 
 
 

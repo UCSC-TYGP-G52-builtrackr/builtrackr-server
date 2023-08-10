@@ -8,7 +8,6 @@ const storage = diskStorage({
     filename: function (req, file, cb) {
       cb(null, Date.now() + '-' + file.originalname); 
       // Customize the file name if needed
-      console.log("whoooooooooooooo")
     }
   });
 
