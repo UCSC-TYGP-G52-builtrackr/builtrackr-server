@@ -4,11 +4,14 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
+import { uploadRouter } from './api/upload.js';
 
 dotenv.config()
 
 connectDB(); 
 app.use('/api/user', userRouter);
+app.use('/api/upload', uploadRouter);
+
 // app.use('/api/task', taskRouter);
 app.use('/api/card', cardRouter);
 app.use('/api/drop', dropRouter);

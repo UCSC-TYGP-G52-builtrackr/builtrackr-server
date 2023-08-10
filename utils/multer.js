@@ -1,6 +1,6 @@
-import multer from 'multer'
+import multer,{diskStorage} from 'multer';
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/'); // Specify the destination directory for uploaded files
     },
