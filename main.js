@@ -8,7 +8,7 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
-import { uploadRouter } from './api/upload.js';
+
 
 dotenv.config()
 
