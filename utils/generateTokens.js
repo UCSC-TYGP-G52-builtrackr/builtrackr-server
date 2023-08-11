@@ -10,7 +10,6 @@ const generateToken = (res, userId) => {
   console.log(token);
 
   res.cookie("jwt", token, {
-    domain: 'http://localhost:3000/',
     httpOnly: false,
     // secure: true,
     sameSite: "strict",
