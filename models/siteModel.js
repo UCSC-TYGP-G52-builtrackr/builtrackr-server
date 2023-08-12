@@ -1,4 +1,5 @@
 import { query } from "../config/db.js";
+import asyncHandler from "express-async-handler";
 
 const addSite = async (
   siteName,
@@ -28,4 +29,24 @@ const addSite = async (
   }
 };
 
-export { addSite };
+const siteDisplay = asyncHandler(async () => {
+  try {
+    const sitesQuery = "SELECT * FROM consite";
+    const result = await query(sitesQuery);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+const singleSiteDisplay = asyncHandler(async (id) => {
+  try {
+    const singleSiteQuery = "SELECT * FROM consite WHERE site_id = $1";
+    const result = await query(singleSiteQuery, [id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+export { addSite, siteDisplay, singleSiteDisplay };

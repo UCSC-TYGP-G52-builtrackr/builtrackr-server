@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import {
   addSite,
+  siteDisplay,
+  singleSiteDisplay,
 } from "../models/siteModel.js";
 
 const addNewSite = asyncHandler(async (req, res) => {
@@ -28,4 +30,15 @@ const addNewSite = asyncHandler(async (req, res) => {
     }
   });
 
-  export { addNewSite };
+  const getSitesToDisplay = asyncHandler(async (req, res) => {
+    const result = await siteDisplay();
+    res.status(200).json(result);
+  });
+
+  const getSingleSiteData = asyncHandler(async (req, res) => {
+    const { id } = req.body;
+    const result = await singleSiteDisplay(id);
+    res.status(200).json(result);
+  });
+
+  export { addNewSite, getSitesToDisplay, getSingleSiteData };
