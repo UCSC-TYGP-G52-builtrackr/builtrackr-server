@@ -10,7 +10,7 @@ import {
   addeUserPrivileges,
   allPrivileges,
   addeUserRole,
-  rolePrivileges
+  rolePrivileges,
 } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
@@ -29,8 +29,7 @@ const authUser = asyncHandler(async (req, res) => {
     generateToken(res, user.company_id);
     res.status(201).json({
       id: user.company_id,
-      name: user.name,
-      email: user.email,
+      name: user.company_name,
     });
   } else {
     res.status(401).json({ message: "Invalid email or password" });
@@ -75,8 +74,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (user) {
     res.status(201).json({
-      id: user.id,
-      name: user.name,
+      id: user.company_id,
+      name: user.company_name,
       email: user.email,
     });
   } else {
@@ -129,27 +128,31 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 const createUserRole = asyncHandler(async (req, res) => {
-  const { name, roles } = req.body;
+  const { name, type,company_id } = req.body;
   console.log(req.body);
   const customFileName = req.file;
 
-  const addRole = await addeUserRole(name, customFileName, 1);
+  const addRole = await addeUserRole(name, type,company_id);
 
   if (addRole) {
-    for (let index = 0; index < roles.length; index++) {
-      const addPrivilege = await addeUserPrivileges(
-        addRole.role_id,
-        roles[index]
-      );
-      if (addPrivilege) {
-        continue;
-      } else {
-        throw new Error("User role not added succsesfully");
-      }
-    }
     res.status(200).json({
       id: addRole.role_id,
     });
+
+    // for (let index = 0; index < roles.length; index++) {
+    //   const addPrivilege = await addeUserPrivileges(
+    //     addRole.role_id,
+    //     roles[index]
+    //   );
+    //   if (addPrivilege) {
+    //     continue;
+    //   } else {
+    //     throw new Error("User role not added succsesfully");
+    //   }
+    // }
+    // res.status(200).json({
+    //   id: addRole.role_id,
+    // });
   } else {
     res.status(404);
     throw new Error("User role not added succsesfully");
@@ -168,9 +171,9 @@ const getPrivileges = asyncHandler(async (req, res) => {
 });
 
 const getRolePrivileges = asyncHandler(async (req, res) => {
-  const {id} = req.body
-  const result = await rolePrivileges(id)
-  res.status(200).json(result)
+  const { id } = req.body;
+  const result = await rolePrivileges(id);
+  res.status(200).json(result);
 });
 
 export {
