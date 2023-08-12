@@ -1,5 +1,6 @@
 import {app} from './core/init.js';
 import {userRouter} from './api/user.js';
+import { siteRouter } from './api/site.js';
 import { employeeRouter } from './api/employee.js';
 import {taskRouter} from './api/task.js';
 import {siteManagerRouter} from './api/sitemanger.js';
@@ -51,7 +52,7 @@ app.use('/api/employee',employeeRouter)
 
 
 //chamodi
-
+app.use('/api/site',siteRouter);
 
 
 
