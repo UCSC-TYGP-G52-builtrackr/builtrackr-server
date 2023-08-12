@@ -53,12 +53,12 @@ const registerUser = asyncHandler(async (req, res) => {
   } = req.body;
   console.log(req.body);
 
-  const userExist = await userExists(email);
+  // const userExist = await userExists(email);
 
-  if (userExist) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
+  // if (userExist) {
+  //   res.status(400);
+  //   throw new Error("User already exists");
+  // }
 
   const user = await regUser(
     email,
