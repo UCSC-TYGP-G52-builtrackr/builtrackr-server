@@ -1,6 +1,7 @@
 import { router as userRouter } from "./index.js";
 import { transporter } from "../utils/mailer.js";
 import {
+  existUser,
   authUser,
   registerUser,
   logoutUser,
@@ -21,6 +22,7 @@ userRouter.post("/getUserRoles", getUserRoles);
 userRouter.post("/addUserRole", upload.single("photo"), createUserRole);
 userRouter.post("/privileges", getPrivileges);
 userRouter.post("/rolePrivileges", getRolePrivileges);
+userRouter.post("/userExists",existUser)
 userRouter
   .route("/profile")
   .get(protect, getUserProfile)
