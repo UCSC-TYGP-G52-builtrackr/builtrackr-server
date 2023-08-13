@@ -44,3 +44,20 @@ INSERT INTO privileges (privilege) VALUES
 	('Remove Tasks'),
 	('Upload Documents'),
 	('Request Inventory');
+
+CREATE TABLE employee (
+	no SERIAL PRIMARY KEY,
+	f_name VARCHAR (50),
+	l_name VARCHAR (50),
+	nic varchar (12),
+	tel_no varchar (10),
+	id varchar (50),
+	email VARCHAR (50),
+	address varchar (100),
+	dob DATE,
+	register_date DATE,
+	password varchar (255),
+	company_id int,
+	FOREIGN KEY (company_id) REFERENCES users(company_id)
+);
+

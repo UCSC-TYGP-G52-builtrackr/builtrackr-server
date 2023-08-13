@@ -21,6 +21,7 @@ const loginUser = asyncHandler(async (email, password) => {
   if (userDetails.rowCount > 0) {
     const user = userDetails.rows[0];
     const matchPassword = await bcrypt.compare(password, user.password);
+    // const matchPassword = user.password === password;
 
     return matchPassword ? user : false;
   } else {
@@ -42,15 +43,15 @@ const regUser = asyncHandler(
     password
   ) => {
     const salt = await bcrypt.genSalt(10);
-    console.log(certificate, password, username);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const createUserQuery =
       "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) RETURNING company_id, company_name, company_email";
+
     const createUser = await query(createUserQuery, [
       name,
       regNo,
-      certificate.name,
+      "nameofphoto",
       email,
       line1,
       line2,
@@ -60,7 +61,7 @@ const regUser = asyncHandler(
     ]);
     if (createUser.rowCount > 0) {
       // Upload file
-      upload.single(certificate);
+      // upload.single(certificate);
       return createUser.rows[0];
     } else {
       throw new Error("Internal Error");
@@ -105,11 +106,11 @@ const getUserFromToken = asyncHandler(async (userId) => {
   }
 });
 
-const addeUserRole = asyncHandler(async (name, photo, id) => {
+const addeUserRole = asyncHandler(async (name, type, id) => {
   try {
     const createQuery =
-      "INSERT INTO user_roles (role_name, photo_path, company_id) VALUES ($1, $2, $3) RETURNING role_id";
-    const result = await query(createQuery, [name, photo, id]);
+      "INSERT INTO user_roles (role_name, company_id, type) VALUES ($1, $2, $3) RETURNING role_id";
+    const result = await query(createQuery, [name, id, type]);
     return result.rows[0];
   } catch (err) {
     throw new Error("Internal error");
