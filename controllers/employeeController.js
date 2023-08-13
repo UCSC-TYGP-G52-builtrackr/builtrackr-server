@@ -3,8 +3,31 @@ import {
   addEmployee,
   authEmployee,
   getEmployeesByType,
+  getAllEmployeesDetails,
+  employeeExists
 } from "../models/employeeModel.js";
 import generateToken from "../utils/generateTokens.js";
+
+const existEmployee = asyncHandler(async(req,res) => {
+  const {email} = req.body
+  console.log(email)
+  try {
+    const employeeExist = await employeeExists(email);
+    console.log(employeeExist)
+    if(employeeExist){
+      res.status(201).json({
+        status: true
+      });
+    }else{
+      res.status(201).json({
+        status: false
+      });
+    }
+    
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
 
 const registerEmployee = asyncHandler(async (req, res) => {
   const {
@@ -50,22 +73,24 @@ const registerEmployee = asyncHandler(async (req, res) => {
 const loginEmployee = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(req.body);
-  console.log(email);
+  try {
+    const employee = await authEmployee(email, password);
 
-  const employee = await authEmployee(email, password);
-  console.log(employee);
-
-  if (employee) {
-    generateToken(res, employee.no);
-    res.status(201).json({
-      employee_id: employee.no,
-      name: `${employee.f_name} ${employee.l_name}`,
-      type: employee.type,
-      company_id: employee.company_id,
-    });
-  } else {
-    res.status(401).json({ message: "Invalid email or password" });
+    if (employee === "Password was Incoorect") {
+      res.status(400).json({ error: "Password was Incoorect" });
+    } else if (employee === "Email does not exist") {
+      res.status(400).json({ error: "Email does not exist" });
+    } else {
+      generateToken(res, employee.no);
+      res.status(201).json({
+        employee_id: employee.no,
+        name: `${employee.f_name} ${employee.l_name}`,
+        type: employee.type,
+        company_id: employee.company_id,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 const test = asyncHandler(async (req, res) => {
@@ -88,5 +113,18 @@ const getEmployees = asyncHandler(async (req, res) => {
     throw new Error(err);
   }
 });
+const getAllEmployees = asyncHandler(async (req, res) => {
+  const { id, type } = req.body;
+  try {
+    const employees = await getAllEmployeesDetails(id, type);
+    if (employees) {
+      res.status(200).json(employees);
+    } else {
+      res.status(401).json({ message: "Not success" });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+});
 
-export { registerEmployee, loginEmployee, test, getEmployees };
+export { registerEmployee, loginEmployee, test, getEmployees, getAllEmployees,existEmployee };
