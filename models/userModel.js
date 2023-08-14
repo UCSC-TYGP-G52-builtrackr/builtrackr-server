@@ -46,13 +46,16 @@ const regUser = asyncHandler(
     contactNo,
     certificate,
     username,
-    password
+    password,
+    company_id,
+    type,
+    
   ) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const createUserQuery =
-      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) RETURNING company_id, company_name, company_email";
+      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password,type ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING company_id, company_name, company_email";
 
     const createUser = await query(createUserQuery, [
       name,
@@ -64,6 +67,8 @@ const regUser = asyncHandler(
       contactNo,
       username,
       hashedPassword,
+      type,
+      
     ]);
     if (createUser.rowCount > 0) {
       // Upload file

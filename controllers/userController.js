@@ -76,6 +76,8 @@ const registerUser = asyncHandler(async (req, res) => {
     certificate,
     username,
     password,
+    company_id,
+    type,
   } = req.body;
   console.log(req.body);
 
@@ -95,7 +97,9 @@ const registerUser = asyncHandler(async (req, res) => {
     contactNo,
     certificate,
     username,
-    password
+    password,
+    company_id,
+    type,
   );
 
   if (user) {
