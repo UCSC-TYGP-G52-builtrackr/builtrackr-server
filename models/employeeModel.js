@@ -96,13 +96,49 @@ const getEmployeesByType = async (id, type) => {
 };
 
 const getAllEmployeesDetails = async (id, type) => {
-  const employeeDetailsQuery = `SELECT *,'HR Manager' AS role_name FROM employee WHERE company_id = $1 AND type=$2 UNION SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1`;
+  const employeeDetailsQuery = `SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 UNION SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1`;
   try {
-    const employeeDetails = await query(employeeDetailsQuery, [id, type]);
+    const employeeDetails = await query(employeeDetailsQuery, [id]);
     if (employeeDetails.rowCount > 0) {
       return employeeDetails.rows;
     } else {
       throw new Error("No employee records");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const getEmployeesCount = async (id) => {
+  const countQuery = `select  count(*),'HR Manager' as role_name from employee where company_id=$1 and type=1
+                      UNION SELECT  count(*),u.role_name FROM employee as e 
+                      INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id 
+                      WHERE e.company_id = $1 group by role_name `;
+
+  try {
+    const employeeCount = await query(countQuery, [id]);
+    if (employeeCount.rowCount === 1 && employeeCount.rows[0].count !== 0) {
+      try {
+        const userRolesQuery = "SELECT * FROM user_roles WHERE company_id = $1";
+        const result = await query(userRolesQuery, [id]);
+        const data = [];
+        data.push({
+          role_name: "HR Manager",
+          count: employeeCount.rows[0].count,
+        });
+        result.rows.map((el) =>
+          data.push({ role_name: el.role_name, count: 0 })
+        );
+
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    } else if (employeeCount.rowCount > 1) {
+      return employeeCount.rows;
+    } else {
+      console.log("ellllll0000000");
+      return false;
     }
   } catch (err) {
     throw new Error(err);
@@ -115,4 +151,5 @@ export {
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
+  getEmployeesCount,
 };

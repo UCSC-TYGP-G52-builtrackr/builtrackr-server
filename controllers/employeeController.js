@@ -4,7 +4,8 @@ import {
   authEmployee,
   getEmployeesByType,
   getAllEmployeesDetails,
-  employeeExists
+  employeeExists,
+  getEmployeesCount
 } from "../models/employeeModel.js";
 import generateToken from "../utils/generateTokens.js";
 
@@ -115,8 +116,10 @@ const getEmployees = asyncHandler(async (req, res) => {
 });
 const getAllEmployees = asyncHandler(async (req, res) => {
   const { id, type } = req.body;
+  console.log(id)
   try {
     const employees = await getAllEmployeesDetails(id, type);
+    console.log(employees)
     if (employees) {
       res.status(200).json(employees);
     } else {
@@ -126,5 +129,18 @@ const getAllEmployees = asyncHandler(async (req, res) => {
     throw new Error(err);
   }
 });
+const getAllemployeesCount = asyncHandler(async(req,res) => {
+  const { id } = req.body;
+  try {
+    const employees = await getEmployeesCount(id);
+    if (employees) {
+      res.status(200).json(employees);
+    } else {
+      res.status(401).json({ message: "No employee records" });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+})
 
-export { registerEmployee, loginEmployee, test, getEmployees, getAllEmployees,existEmployee };
+export { registerEmployee, loginEmployee, test, getEmployees, getAllEmployees,existEmployee,getAllemployeesCount };

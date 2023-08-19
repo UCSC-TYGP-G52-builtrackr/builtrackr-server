@@ -70,3 +70,6 @@ FROM
 INNER JOIN user_roles as u
     ON e.type=u.type AND e.company_id=u.company_id
 WHERE e.company_id = 1 
+
+select  count(*),'HR Manager' as role_name from employee
+where company_id=1 and type=1
