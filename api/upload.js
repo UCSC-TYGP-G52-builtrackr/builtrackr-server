@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 import { upload } from "../utils/multer.js";
+import { log } from "console";
 
 
 const __dirname = path.resolve();
@@ -43,4 +44,24 @@ uploadRouter.get('/getpdfs', (req, res) => {
     );
 });
 
+uploadRouter.post('/downloadpdfs', (req, res) => {
+    // get all the files inside upload folder
+    const {filename} = req.body;
+    const filePath = path.join(__dirname, '/uploads', filename);
+    res.download(filePath);
+});
+
+uploadRouter.delete('/deletepdf/:filename', async (req, res) => {
+    const { filename } = req.params;
+    const filePath = path.join(__dirname, '/uploads', filename);
+  
+    try {
+      fs.unlinkSync(filePath);
+      console.log(`PDF ${filename} deleted.`);
+      res.status(200).send(`PDF ${filename} deleted.`);
+    } catch (error) {
+      console.error(`Error deleting PDF ${filename}:`, error);
+      res.status(500).send(`Error deleting PDF ${filename}`);
+    }
+  });
 export { uploadRouter }

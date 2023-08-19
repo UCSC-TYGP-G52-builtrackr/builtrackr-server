@@ -58,6 +58,15 @@ CREATE TABLE employee (
 	register_date DATE,
 	password varchar (255),
 	company_id int,
+	type int, 
 	FOREIGN KEY (company_id) REFERENCES users(company_id)
 );
 
+SELECT
+    e.*,
+	u.role_name
+FROM
+    employee as e
+INNER JOIN user_roles as u
+    ON e.type=u.type AND e.company_id=u.company_id
+WHERE e.company_id = 1 
