@@ -73,3 +73,7 @@ WHERE e.company_id = 1
 
 select  count(*),'HR Manager' as role_name from employee
 where company_id=1 and type=1
+
+
+	
+	e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,

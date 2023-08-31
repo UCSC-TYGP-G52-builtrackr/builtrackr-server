@@ -13,6 +13,17 @@ const employeeExists = async (email) => {
   }
 };
 
+const labourerExists = async (email) => {
+  try {
+    const labourerExistsQuery = "SELECT * FROM labourer WHERE email = $1";
+    const labourerExists = await query(labourerExistsQuery, [email]);
+
+    return labourerExists.rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Internal Error. Try again later`);
+  }
+};
+
 const addEmployee = async (
   fName,
   lName,
@@ -59,6 +70,45 @@ const addEmployee = async (
   }
 };
 
+const addLaboures = async (
+  fName,
+  lName,
+  nic,
+  phone,
+  id,
+  email,
+  dob,
+  registerDate,
+  address,
+  company_id
+) => {
+  const addLabourerQuery =
+    "INSERT INTO labourer (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,company_id ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING no ";
+
+  try {
+    const addLabourer = await query(addLabourerQuery, [
+      fName,
+      lName,
+      nic,
+      phone,
+      id,
+      email,
+      address,
+      dob,
+      registerDate,
+      company_id,
+    ]);
+
+    if (addLabourer.rowCount > 0) {
+      return addLabourer.rows[0];
+    } else {
+      throw new Error("Labourer adding not sucess");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const authEmployee = async (email, password) => {
   const employeeDetailsQuery = "SELECT * FROM employee WHERE email = $1";
   try {
@@ -95,8 +145,24 @@ const getEmployeesByType = async (id, type) => {
   }
 };
 
+const getAllLabourers = async (id) => {
+  const labourerDetailsQuery = "SELECT * FROM labourer WHERE company_id = $1 ";
+  try {
+    const labourerDetails = await query(labourerDetailsQuery, [id]);
+    if (labourerDetails.rowCount > 0) {
+      return labourerDetails.rows;
+    } else {
+      throw new Error("No employee records");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 const getAllEmployeesDetails = async (id, type) => {
-  const employeeDetailsQuery = `SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 UNION SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1`;
+  const employeeDetailsQuery = `SELECT  	e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 
+                                UNION SELECT e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1
+                                UNION SELECT *, 'Labourer' AS role_name from labourer where company_id = $1 `;
   try {
     const employeeDetails = await query(employeeDetailsQuery, [id]);
     if (employeeDetails.rowCount > 0) {
@@ -113,33 +179,30 @@ const getEmployeesCount = async (id) => {
   const countQuery = `select  count(*),'HR Manager' as role_name from employee where company_id=$1 and type=1
                       UNION SELECT  count(*),u.role_name FROM employee as e 
                       INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id 
-                      WHERE e.company_id = $1 group by role_name `;
+                      WHERE e.company_id = $1 group by role_name  
+                      UNION SELECT count(*),'Labourer' as role_name from labourer where company_id = $1`;
 
   try {
     const employeeCount = await query(countQuery, [id]);
-    if (employeeCount.rowCount === 1 && employeeCount.rows[0].count !== 0) {
-      try {
-        const userRolesQuery = "SELECT * FROM user_roles WHERE company_id = $1";
-        const result = await query(userRolesQuery, [id]);
-        const data = [];
-        data.push({
-          role_name: "HR Manager",
-          count: employeeCount.rows[0].count,
-        });
-        result.rows.map((el) =>
-          data.push({ role_name: el.role_name, count: 0 })
-        );
+    try {
+      const userRolesQuery = "SELECT * FROM user_roles WHERE company_id = $1";
+      const result = await query(userRolesQuery, [id]);
+      const uniqueRoleNames = new Set([
+        ...employeeCount.rows.map((item) => item.role_name),
+        ...result.rows.map((role) => role.role_name),
+      ]);
 
-        return data;
-      } catch (error) {
-        throw new Error(error);
-      }
-    } else if (employeeCount.rowCount > 1) {
-      return employeeCount.rows;
-    } else {
-      console.log("ellllll0000000");
-      return false;
-    }
+      // Create the resulting array with role name and count
+      const resultArray = Array.from(uniqueRoleNames).map((roleName) => {
+        const countItem = employeeCount.rows.find(
+          (item) => item.role_name === roleName
+        );
+        const countValue = countItem ? parseInt(countItem.count) : 0;
+        return { role_name: roleName, count: countValue };
+      });
+      console.log(resultArray);
+      return resultArray;
+    } catch (error) {}
   } catch (err) {
     throw new Error(err);
   }
@@ -151,5 +214,8 @@ export {
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
+  labourerExists,
   getEmployeesCount,
+  addLaboures,
+  getAllLabourers,
 };

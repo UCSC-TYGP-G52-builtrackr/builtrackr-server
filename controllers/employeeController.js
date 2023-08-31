@@ -1,34 +1,57 @@
 import asyncHandler from "express-async-handler";
+import { transporter } from "../utils/mailer.js";
+
 import {
   addEmployee,
   authEmployee,
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
-  getEmployeesCount
+  labourerExists,
+  getEmployeesCount,
+  addLaboures,
+  getAllLabourers,
 } from "../models/employeeModel.js";
 import generateToken from "../utils/generateTokens.js";
 
-const existEmployee = asyncHandler(async(req,res) => {
-  const {email} = req.body
-  console.log(email)
+const existEmployee = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
   try {
-    const employeeExist = await employeeExists(email);
-    console.log(employeeExist)
-    if(employeeExist){
+    const employeeExist = await labourerExists(email);
+    console.log(employeeExist);
+    if (employeeExist) {
       res.status(201).json({
-        status: true
+        status: true,
       });
-    }else{
+    } else {
       res.status(201).json({
-        status: false
+        status: false,
       });
     }
-    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-})
+});
+const existLabourer = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  console.log(email);
+  try {
+    const labourerExist = await labourerExists(email);
+    console.log(labourerExist);
+    if (labourerExist) {
+      res.status(201).json({
+        status: true,
+      });
+    } else {
+      res.status(201).json({
+        status: false,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 const registerEmployee = asyncHandler(async (req, res) => {
   const {
@@ -63,8 +86,63 @@ const registerEmployee = asyncHandler(async (req, res) => {
       company_id,
       type
     );
+    let options = {
+      from: "builtrackrverifyn@gmail.com",
+      to: `${email}`,
+      subject: "Succesfully register into the system",
+      html: `<p>You havv been succesfully registerd into bulitrackr system by Company Admin</p>
+            <p> Now yo can login into the system using given credebtials<p/>
+            <p> Username : ${email}</p>
+            <p> Password : ${password}</p>
+            <p>Click here to login : http://localhost:3000/login </p>`,
+    };
+    transporter.sendMail(options, function (error, info) {
+      if (error) {
+        console.log(error);
+        res.status(201).send("Email not send");
+      } else {
+        res.status(200).json({
+          no: employee.no,
+        });
+      }
+    });
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const addLabourer = asyncHandler(async (req, res) => {
+  const {
+    fName,
+    lName,
+    nic,
+    phone,
+    id,
+    email,
+    dob,
+    registerDate,
+    address,
+    company_id,
+  } = req.body;
+
+  console.log(req.body);
+
+  try {
+    const labourer = await addLaboures(
+      fName,
+      lName,
+      nic,
+      phone,
+      id,
+      email,
+      dob,
+      registerDate,
+      address,
+      company_id
+    );
+
     res.status(200).json({
-      no: employee.no,
+      no: labourer.no,
     });
   } catch (err) {
     throw new Error(err);
@@ -114,12 +192,27 @@ const getEmployees = asyncHandler(async (req, res) => {
     throw new Error(err);
   }
 });
+
+const getLabourers = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+  try {
+    const labourers = await getAllLabourers(id);
+    if (labourers) {
+      res.status(200).json(labourers);
+    } else {
+      res.status(401).json({ message: "Not success" });
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
 const getAllEmployees = asyncHandler(async (req, res) => {
   const { id, type } = req.body;
-  console.log(id)
+  console.log(id);
   try {
     const employees = await getAllEmployeesDetails(id, type);
-    console.log(employees)
+    console.log(employees);
     if (employees) {
       res.status(200).json(employees);
     } else {
@@ -129,7 +222,7 @@ const getAllEmployees = asyncHandler(async (req, res) => {
     throw new Error(err);
   }
 });
-const getAllemployeesCount = asyncHandler(async(req,res) => {
+const getAllemployeesCount = asyncHandler(async (req, res) => {
   const { id } = req.body;
   try {
     const employees = await getEmployeesCount(id);
@@ -141,6 +234,17 @@ const getAllemployeesCount = asyncHandler(async(req,res) => {
   } catch (err) {
     throw new Error(err);
   }
-})
+});
 
-export { registerEmployee, loginEmployee, test, getEmployees, getAllEmployees,existEmployee,getAllemployeesCount };
+export {
+  registerEmployee,
+  loginEmployee,
+  test,
+  getEmployees,
+  getAllEmployees,
+  existEmployee,
+  existLabourer,
+  addLabourer,
+  getAllemployeesCount,
+  getLabourers,
+};
