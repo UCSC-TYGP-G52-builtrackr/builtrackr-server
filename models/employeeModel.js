@@ -62,13 +62,14 @@ const authEmployee = async(email,password) =>{
 }
 
 const getEmployeesByType = async(id,type) => {
+  console.log(id,type);
   const employeeDetailsQuery = "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
   try {
     const employeeDetails = await query (employeeDetailsQuery, [id,type])
     if (employeeDetails.rowCount > 0) {
       return employeeDetails.rows;
     } else {
-      throw new Error("No employee records");
+      throw new Error("No employee records1111");
     }
   } catch (err) {
     throw new Error(err);
