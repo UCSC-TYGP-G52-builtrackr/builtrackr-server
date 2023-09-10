@@ -13,6 +13,7 @@ import {requestRouter} from './api/requests.js';
 import{labourRouter} from './api/labour.js';
 import { equipmentRouter } from './api/equipment.js';
 import { leaveRouter } from './api/leave.js';
+import {fileuploadRouter} from './api/fileupload.js';
 
 dotenv.config()
 
@@ -44,6 +45,7 @@ app.use('/api/requests', requestRouter);
 app.use('/api/labour', labourRouter);
 app.use('/api/equipment', equipmentRouter);
 app.use('/api/leave', leaveRouter);
+app.use('/api/fileupload', fileuploadRouter);
 
 
 
