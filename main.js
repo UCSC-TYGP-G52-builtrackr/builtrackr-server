@@ -9,7 +9,10 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
-
+import {requestRouter} from './api/requests.js';
+import{labourRouter} from './api/labour.js';
+import { equipmentRouter } from './api/equipment.js';
+import { leaveRouter } from './api/leave.js';
 
 dotenv.config()
 
@@ -37,6 +40,10 @@ app.use('/api/upload', uploadRouter);
 
 app.use('/api/card', cardRouter);
 app.use('/api/drop', dropRouter);
+app.use('/api/requests', requestRouter);
+app.use('/api/labour', labourRouter);
+app.use('/api/equipment', equipmentRouter);
+app.use('/api/leave', leaveRouter);
 
 
 
