@@ -11,4 +11,15 @@ const viewSupervisor = async () => {
     }
 }
 
-export { viewSupervisor }
+const selectSupervisor = async (supervisorID, siteID) => {
+    try {
+        const selectSupervisorQuery = `UPDATE site SET supervisor_id = ${supervisorID} WHERE site_id = ${siteID}`
+        const queryResult = await query(selectSupervisorQuery)
+        return queryResult.rows
+    } catch (error) {
+        console.error(`Error selecting supervisor: ${error.message}`)
+        throw new Error(error.message)
+    }
+}
+
+export { viewSupervisor,selectSupervisor }

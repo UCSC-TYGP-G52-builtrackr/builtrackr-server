@@ -14,6 +14,27 @@ import {
 } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
+const existUser = asyncHandler(async(req,res) => {
+  const {email} = req.body
+  console.log(email)
+  try {
+    const userExist = await userExists(email);
+    console.log(userExist)
+    if(userExist){
+      res.status(201).json({
+        status: true
+      });
+    }else{
+      res.status(201).json({
+        status: false
+      });
+    }
+    
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
 // @desc    Auth user/set token
 // route    POST /api/users/login
 // @access  Public
@@ -22,17 +43,22 @@ const authUser = asyncHandler(async (req, res) => {
 
   console.log(req.body);
 
-  const user = await loginUser(email, password);
-  console.log(user);
+  try {
+    const user = await loginUser(email, password);
 
-  if (user) {
-    generateToken(res, user.company_id);
-    res.status(201).json({
-      id: user.company_id,
-      name: user.company_name,
-    });
-  } else {
-    res.status(401).json({ message: "Invalid email or password" });
+    if (user === "Password was Incoorect") {
+      res.status(400).json({ error: "Password was Incoorect" });
+    } else if (user === "Email does not exist") {
+      res.status(400).json({ error: "Email does not exist" });
+    } else {
+      generateToken(res, user.company_id);
+      res.status(201).json({
+        id: user.company_id,
+        name: user.company_name,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -50,15 +76,17 @@ const registerUser = asyncHandler(async (req, res) => {
     certificate,
     username,
     password,
+    company_id,
+    type,
   } = req.body;
   console.log(req.body);
 
-  const userExist = await userExists(email);
+  // const userExist = await userExists(email);
 
-  if (userExist) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
+  // if (userExist) {
+  //   res.status(400);
+  //   throw new Error("User already exists");
+  // }
 
   const user = await regUser(
     email,
@@ -69,7 +97,9 @@ const registerUser = asyncHandler(async (req, res) => {
     contactNo,
     certificate,
     username,
-    password
+    password,
+    company_id,
+    type,
   );
 
   if (user) {
@@ -128,31 +158,16 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 const createUserRole = asyncHandler(async (req, res) => {
-  const { name, type,company_id } = req.body;
+  const { name, type, company_id } = req.body;
   console.log(req.body);
   const customFileName = req.file;
 
-  const addRole = await addeUserRole(name, type,company_id);
+  const addRole = await addeUserRole(name, type, company_id);
 
   if (addRole) {
     res.status(200).json({
       id: addRole.role_id,
     });
-
-    // for (let index = 0; index < roles.length; index++) {
-    //   const addPrivilege = await addeUserPrivileges(
-    //     addRole.role_id,
-    //     roles[index]
-    //   );
-    //   if (addPrivilege) {
-    //     continue;
-    //   } else {
-    //     throw new Error("User role not added succsesfully");
-    //   }
-    // }
-    // res.status(200).json({
-    //   id: addRole.role_id,
-    // });
   } else {
     res.status(404);
     throw new Error("User role not added succsesfully");
@@ -177,6 +192,7 @@ const getRolePrivileges = asyncHandler(async (req, res) => {
 });
 
 export {
+  existUser,
   authUser,
   registerUser,
   logoutUser,

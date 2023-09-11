@@ -9,23 +9,29 @@ const userExists = async (email) => {
 
     return userExists.rowCount > 0 ? true : false;
   } catch (error) {
-    console.error(`Error checking user existence: ${error.message}`);
-    throw new Error(`Internal Error`);
+    throw new Error(`Internal Error. Try again later`);
   }
 };
 
 // login user with the given email and password
 const loginUser = asyncHandler(async (email, password) => {
   const userDetailsQuery = "SELECT * FROM users WHERE company_email = $1";
-  const userDetails = await query(userDetailsQuery, [email]);
-  if (userDetails.rowCount > 0) {
-    const user = userDetails.rows[0];
-    const matchPassword = await bcrypt.compare(password, user.password);
-    // const matchPassword = user.password === password;
 
-    return matchPassword ? user : false;
-  } else {
-    throw new Error("Email does not exist");
+  try {
+    const userDetails = await query(userDetailsQuery, [email]);
+    if (userDetails.rowCount > 0) {
+      const user = userDetails.rows[0];
+      const matchPassword = await bcrypt.compare(password, user.password);
+      if (matchPassword) {
+        return user;
+      } else {
+        return ("Password was Incoorect");
+      }
+    } else {
+      return ("Email does not exist");
+    }
+  } catch (err) {
+    throw new Error("Internal Error");
   }
 });
 
@@ -40,13 +46,16 @@ const regUser = asyncHandler(
     contactNo,
     certificate,
     username,
-    password
+    password,
+    company_id,
+    type,
+    
   ) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const createUserQuery =
-      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) RETURNING company_id, company_name, company_email";
+      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password,type ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING company_id, company_name, company_email";
 
     const createUser = await query(createUserQuery, [
       name,
@@ -58,6 +67,8 @@ const regUser = asyncHandler(
       contactNo,
       username,
       hashedPassword,
+      type,
+      
     ]);
     if (createUser.rowCount > 0) {
       // Upload file
@@ -107,10 +118,21 @@ const getUserFromToken = asyncHandler(async (userId) => {
 });
 
 const addeUserRole = asyncHandler(async (name, type, id) => {
+  let image;
+  if (type === 2) {
+    image = "Inventory.jpeg";
+  } else if (type === 3) {
+    image = "CheifEnigineer.jpeg";
+  } else if (type === 4) {
+    image = "SiteEngineer.jpeg";
+  } else if (type === 5) {
+    image = "Supervisor.jpg";
+  }
+
   try {
     const createQuery =
-      "INSERT INTO user_roles (role_name, company_id, type) VALUES ($1, $2, $3) RETURNING role_id";
-    const result = await query(createQuery, [name, id, type]);
+      "INSERT INTO user_roles (role_name,photo_path, company_id, type) VALUES ($1, $2, $3,$4) RETURNING role_id";
+    const result = await query(createQuery, [name, image, id, type]);
     return result.rows[0];
   } catch (err) {
     throw new Error("Internal error");

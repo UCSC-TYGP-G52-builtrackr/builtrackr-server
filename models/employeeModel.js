@@ -2,6 +2,17 @@ import { query } from "../config/db.js";
 import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
 
+const employeeExists = async (email) => {
+  try {
+    const userExistsQuery = "SELECT * FROM employee WHERE email = $1";
+    const userExists = await query(userExistsQuery, [email]);
+
+    return userExists.rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Internal Error. Try again later`);
+  }
+};
+
 const addEmployee = async (
   fName,
   lName,
@@ -48,32 +59,60 @@ const addEmployee = async (
   }
 };
 
-const authEmployee = async(email,password) =>{
+const authEmployee = async (email, password) => {
   const employeeDetailsQuery = "SELECT * FROM employee WHERE email = $1";
-  const employeeDetails = await query(employeeDetailsQuery, [email]);
-  if (employeeDetails.rowCount > 0) {
-    const employee = employeeDetails.rows[0];
-    const matchPassword = await bcrypt.compare(password, employee.password);
-
-    return matchPassword ? employee : false;
-  } else {
-    throw new Error("Email does not exist");
-  }
-}
-
-const getEmployeesByType = async(id,type) => {
-  console.log(id,type);
-  const employeeDetailsQuery = "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
   try {
-    const employeeDetails = await query (employeeDetailsQuery, [id,type])
+    const employeeDetails = await query(employeeDetailsQuery, [email]);
+    if (employeeDetails.rowCount > 0) {
+      const employee = employeeDetails.rows[0];
+      const matchPassword = await bcrypt.compare(password, employee.password);
+
+      if (matchPassword) {
+        return employee;
+      } else {
+        return "Password was Incoorect";
+      }
+    } else {
+      return "Email does not exist";
+    }
+  } catch (err) {
+    throw new Error("Internal Error");
+  }
+};
+
+const getEmployeesByType = async (id, type) => {
+  const employeeDetailsQuery =
+    "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
+  try {
+    const employeeDetails = await query(employeeDetailsQuery, [id, type]);
     if (employeeDetails.rowCount > 0) {
       return employeeDetails.rows;
     } else {
-      throw new Error("No employee records1111");
+      throw new Error("No employee records");
     }
   } catch (err) {
     throw new Error(err);
   }
-}
+};
 
-export { addEmployee,authEmployee,getEmployeesByType };
+const getAllEmployeesDetails = async (id, type) => {
+  const employeeDetailsQuery = `SELECT *,'HR Manager' AS role_name FROM employee WHERE company_id = $1 AND type=$2 UNION SELECT  e.*,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1`;
+  try {
+    const employeeDetails = await query(employeeDetailsQuery, [id, type]);
+    if (employeeDetails.rowCount > 0) {
+      return employeeDetails.rows;
+    } else {
+      throw new Error("No employee records");
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+export {
+  addEmployee,
+  authEmployee,
+  getEmployeesByType,
+  getAllEmployeesDetails,
+  employeeExists,
+};
