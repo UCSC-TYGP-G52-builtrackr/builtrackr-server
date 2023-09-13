@@ -9,6 +9,8 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
+import {labourLeaveRouter} from './api/labourleave.js'
+
 
 
 dotenv.config()
@@ -24,6 +26,7 @@ app.use('/api/task', taskRouter);
 app.use('/api/sitemanager', siteManagerRouter);
 app.use('/api/upload', uploadRouter);
 // app.use('/api/payment', paymentRouter);
+app.use('/api/labourleave',labourLeaveRouter)
 
 
 
