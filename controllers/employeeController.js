@@ -7,6 +7,7 @@ import {
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
+  employeeExistByType,
   labourerExists,
   getEmployeesCount,
   addLaboures,
@@ -18,9 +19,26 @@ const existEmployee = asyncHandler(async (req, res) => {
   const { email } = req.body;
   console.log(email);
   try {
-    const employeeExist = await labourerExists(email);
+    const employeeExist = await employeeExists(email);
     console.log(employeeExist);
     if (employeeExist) {
+      res.status(201).json({
+        status: true,
+      });
+    } else {
+      res.status(201).json({
+        status: false,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+const existEmployeeByType= asyncHandler(async (req, res) => {
+  const { company_id,type } = req.body;
+  try {
+    const employeeExistType = await employeeExistByType(type,company_id);
+    if (employeeExistType) {
       res.status(201).json({
         status: true,
       });
@@ -67,6 +85,7 @@ const registerEmployee = asyncHandler(async (req, res) => {
     password,
     company_id,
     type,
+    imageName,
   } = req.body;
 
   console.log(req.body);
@@ -84,7 +103,8 @@ const registerEmployee = asyncHandler(async (req, res) => {
       address,
       password,
       company_id,
-      type
+      type,
+      imageName
     );
     let options = {
       from: "builtrackrverifyn@gmail.com",
@@ -123,6 +143,7 @@ const addLabourer = asyncHandler(async (req, res) => {
     registerDate,
     address,
     company_id,
+    imageName,
   } = req.body;
 
   console.log(req.body);
@@ -138,7 +159,8 @@ const addLabourer = asyncHandler(async (req, res) => {
       dob,
       registerDate,
       address,
-      company_id
+      company_id,
+      imageName
     );
 
     res.status(200).json({
@@ -166,6 +188,7 @@ const loginEmployee = asyncHandler(async (req, res) => {
         name: `${employee.f_name} ${employee.l_name}`,
         type: employee.type,
         company_id: employee.company_id,
+        role_name: employee.role_name,
       });
     }
   } catch (err) {
@@ -243,6 +266,7 @@ export {
   getEmployees,
   getAllEmployees,
   existEmployee,
+  existEmployeeByType,
   existLabourer,
   addLabourer,
   getAllemployeesCount,

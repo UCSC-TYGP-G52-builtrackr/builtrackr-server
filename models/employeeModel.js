@@ -12,6 +12,16 @@ const employeeExists = async (email) => {
     throw new Error(`Internal Error. Try again later`);
   }
 };
+const employeeExistByType = async (type,company_id) => {
+  try {
+    const userExistsQuery = "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
+    const userExists = await query(userExistsQuery, [type,company_id]);
+
+    return userExists.rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Internal Error. Try again later`);
+  }
+};
 
 const labourerExists = async (email) => {
   try {
@@ -36,37 +46,98 @@ const addEmployee = async (
   address,
   password,
   company_id,
-  type
+  type,
+  photo_path
 ) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
+  if (type === 4) {
+    try {
+      const createEmployee = await query(
+        "SELECT add_site_manager($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13)",
+        [
+          fName,
+          lName,
+          nic,
+          phone,
+          id,
+          email,
+          address,
+          dob,
+          registerDate,
+          hashedPassword,
+          company_id,
+          type,
+          photo_path
+        ]
+      );
 
-  const createEmployeeQuery =
-    "INSERT INTO employee (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,password,company_id,type ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING no ";
-
-  try {
-    const createEmployee = await query(createEmployeeQuery, [
-      fName,
-      lName,
-      nic,
-      phone,
-      id,
-      email,
-      address,
-      dob,
-      registerDate,
-      hashedPassword,
-      company_id,
-      type,
-    ]);
-
-    if (createEmployee.rowCount > 0) {
-      return createEmployee.rows[0];
-    } else {
-      throw new Error("Employee adding not sucess");
+      if (createEmployee.rowCount > 0) {
+        return createEmployee.rows[0];
+      } else {
+        throw new Error("Employee adding not sucess");
+      }
+    } catch (err) {
+      throw new Error(err);
     }
-  } catch (err) {
-    throw new Error(err);
+  } else if (type === 5) {
+    try {
+      const createEmployee = await query(
+        "SELECT add_site_supervisor($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13)",
+        [
+          fName,
+          lName,
+          nic,
+          phone,
+          id,
+          email,
+          address,
+          dob,
+          registerDate,
+          hashedPassword,
+          company_id,
+          type,
+          photo_path
+        ]
+      );
+
+      if (createEmployee.rowCount > 0) {
+        return createEmployee.rows[0];
+      } else {
+        throw new Error("Employee adding not sucess");
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  } else {
+    const createEmployeeQuery =
+      "INSERT INTO employee (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,password,company_id,type,photo_path ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING no ";
+
+    try {
+      const createEmployee = await query(createEmployeeQuery, [
+        fName,
+        lName,
+        nic,
+        phone,
+        id,
+        email,
+        address,
+        dob,
+        registerDate,
+        hashedPassword,
+        company_id,
+        type,
+        photo_path
+      ]);
+
+      if (createEmployee.rowCount > 0) {
+        return createEmployee.rows[0];
+      } else {
+        throw new Error("Employee adding not sucess");
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 };
 
@@ -80,11 +151,11 @@ const addLaboures = async (
   dob,
   registerDate,
   address,
-  company_id
+  company_id,
+  photo_path
 ) => {
   const addLabourerQuery =
-    "INSERT INTO labourer (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,company_id ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING no ";
-
+    "INSERT INTO labourer (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,company_id,photo_path ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING no";
   try {
     const addLabourer = await query(addLabourerQuery, [
       fName,
@@ -97,6 +168,7 @@ const addLaboures = async (
       dob,
       registerDate,
       company_id,
+      photo_path,
     ]);
 
     if (addLabourer.rowCount > 0) {
@@ -110,7 +182,8 @@ const addLaboures = async (
 };
 
 const authEmployee = async (email, password) => {
-  const employeeDetailsQuery = "SELECT * FROM employee WHERE email = $1";
+  const employeeDetailsQuery =
+    "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
   try {
     const employeeDetails = await query(employeeDetailsQuery, [email]);
     if (employeeDetails.rowCount > 0) {
@@ -123,7 +196,28 @@ const authEmployee = async (email, password) => {
         return "Password was Incoorect";
       }
     } else {
-      return "Email does not exist";
+      const employeeDetailsQuery2 =
+        "SELECT *,'HR Manager' AS role_name FROM employee  WHERE email = $1";
+      try {
+        console.log("2");
+        const employeeDetails2 = await query(employeeDetailsQuery2, [email]);
+        if (employeeDetails2.rowCount > 0) {
+          const employee2 = employeeDetails2.rows[0];
+          const matchPassword2 = await bcrypt.compare(
+            password,
+            employee2.password
+          );
+          if (matchPassword2) {
+            return employee2;
+          } else {
+            return "Password was Incoorect";
+          }
+        } else {
+          return "Email does not exist";
+        }
+      } catch (err) {
+        throw new Error("Internal Error");
+      }
     }
   } catch (err) {
     throw new Error("Internal Error");
@@ -160,8 +254,8 @@ const getAllLabourers = async (id) => {
 };
 
 const getAllEmployeesDetails = async (id, type) => {
-  const employeeDetailsQuery = `SELECT  	e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 
-                                UNION SELECT e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1
+  const employeeDetailsQuery = `SELECT  	e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,e.photo_path,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 
+                                UNION SELECT e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,e.photo_path,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1
                                 UNION SELECT *, 'Labourer' AS role_name from labourer where company_id = $1 `;
   try {
     const employeeDetails = await query(employeeDetailsQuery, [id]);
@@ -214,6 +308,7 @@ export {
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
+  employeeExistByType,
   labourerExists,
   getEmployeesCount,
   addLaboures,

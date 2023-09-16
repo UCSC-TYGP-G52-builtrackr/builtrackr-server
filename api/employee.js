@@ -9,6 +9,7 @@ import {
   getEmployees,
   getAllEmployees,
   existEmployee,
+  existEmployeeByType,
   getAllemployeesCount,
   existLabourer,
   addLabourer,
@@ -22,8 +23,9 @@ employeeRouter.post("/getAllEmployees", getAllEmployees);
 employeeRouter.post("/employeeExists", existEmployee);
 employeeRouter.post("/employeeCount", getAllemployeesCount);
 employeeRouter.post("/labourerExists", existLabourer);
+employeeRouter.post("/hrExist", existEmployeeByType);
 employeeRouter.post("/registerLabourer", addLabourer);
-employeeRouter.post("/getLabourers",getLabourers)
+employeeRouter.post("/getLabourers", getLabourers);
 employeeRouter.post("/hello", test);
 
 export { employeeRouter };
