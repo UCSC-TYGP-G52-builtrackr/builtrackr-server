@@ -8,7 +8,9 @@ import {
   getAllEmployeesDetails,
   employeeExists,
   employeeExistByType,
+  employeeExistById,
   labourerExists,
+  labourerExistById,
   getEmployeesCount,
   addLaboures,
   getAllLabourers,
@@ -20,7 +22,7 @@ const existEmployee = asyncHandler(async (req, res) => {
   console.log(email);
   try {
     const employeeExist = await employeeExists(email);
-    console.log(employeeExist);
+    console.log("Hello");
     if (employeeExist) {
       res.status(201).json({
         status: true,
@@ -34,11 +36,29 @@ const existEmployee = asyncHandler(async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-const existEmployeeByType= asyncHandler(async (req, res) => {
-  const { company_id,type } = req.body;
+const existEmployeeByType = asyncHandler(async (req, res) => {
+  const { company_id, type } = req.body;
+  
   try {
-    const employeeExistType = await employeeExistByType(type,company_id);
+    const employeeExistType = await employeeExistByType(type, company_id);
     if (employeeExistType) {
+      res.status(201).json({
+        status: true,
+      });
+    } else {
+      res.status(201).json({
+        status: false,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+const existEmployeeById = asyncHandler(async (req, res) => {
+  const { company_id, employee_id } = req.body;
+  try {
+    const employeeExistId = await employeeExistById(employee_id, company_id);
+    if (employeeExistId) {
       res.status(201).json({
         status: true,
       });
@@ -58,6 +78,24 @@ const existLabourer = asyncHandler(async (req, res) => {
     const labourerExist = await labourerExists(email);
     console.log(labourerExist);
     if (labourerExist) {
+      res.status(201).json({
+        status: true,
+      });
+    } else {
+      res.status(201).json({
+        status: false,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+const existLabourerById = asyncHandler(async (req, res) => {
+  const { company_id, employee_id } = req.body;
+  try {
+    const labourerExistId = await labourerExistById(employee_id, company_id);
+    if (labourerExistId) {
       res.status(201).json({
         status: true,
       });
@@ -235,7 +273,6 @@ const getAllEmployees = asyncHandler(async (req, res) => {
   console.log(id);
   try {
     const employees = await getAllEmployeesDetails(id, type);
-    console.log(employees);
     if (employees) {
       res.status(200).json(employees);
     } else {
@@ -267,7 +304,9 @@ export {
   getAllEmployees,
   existEmployee,
   existEmployeeByType,
+  existEmployeeById,
   existLabourer,
+  existLabourerById,
   addLabourer,
   getAllemployeesCount,
   getLabourers,

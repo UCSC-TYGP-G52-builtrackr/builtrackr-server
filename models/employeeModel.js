@@ -12,10 +12,23 @@ const employeeExists = async (email) => {
     throw new Error(`Internal Error. Try again later`);
   }
 };
-const employeeExistByType = async (type,company_id) => {
+const employeeExistByType = async (type, company_id) => {
   try {
-    const userExistsQuery = "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
-    const userExists = await query(userExistsQuery, [type,company_id]);
+    const userExistsQuery =
+      "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
+    const userExists = await query(userExistsQuery, [company_id, type]);
+
+    return userExists.rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Internal Error. Try again later`);
+  }
+};
+
+const employeeExistById = async (employee_id, company_id) => {
+  try {
+    const userExistsQuery =
+      "SELECT * FROM employee WHERE company_id = $1 AND id = $2";
+    const userExists = await query(userExistsQuery, [company_id, employee_id]);
 
     return userExists.rowCount > 0 ? true : false;
   } catch (error) {
@@ -29,6 +42,18 @@ const labourerExists = async (email) => {
     const labourerExists = await query(labourerExistsQuery, [email]);
 
     return labourerExists.rowCount > 0 ? true : false;
+  } catch (error) {
+    throw new Error(`Internal Error. Try again later`);
+  }
+};
+
+const labourerExistById = async (employee_id, company_id) => {
+  try {
+    const userExistsQuery =
+      "SELECT * FROM labourer WHERE company_id = $1 AND id = $2";
+    const userExists = await query(userExistsQuery, [company_id, employee_id]);
+
+    return userExists.rowCount > 0 ? true : false;
   } catch (error) {
     throw new Error(`Internal Error. Try again later`);
   }
@@ -68,7 +93,7 @@ const addEmployee = async (
           hashedPassword,
           company_id,
           type,
-          photo_path
+          photo_path,
         ]
       );
 
@@ -97,7 +122,7 @@ const addEmployee = async (
           hashedPassword,
           company_id,
           type,
-          photo_path
+          photo_path,
         ]
       );
 
@@ -127,7 +152,7 @@ const addEmployee = async (
         hashedPassword,
         company_id,
         type,
-        photo_path
+        photo_path,
       ]);
 
       if (createEmployee.rowCount > 0) {
@@ -154,22 +179,23 @@ const addLaboures = async (
   company_id,
   photo_path
 ) => {
-  const addLabourerQuery =
-    "INSERT INTO labourer (f_name ,l_name,nic,tel_no,id,email,address,dob,register_date,company_id,photo_path ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING no";
   try {
-    const addLabourer = await query(addLabourerQuery, [
-      fName,
-      lName,
-      nic,
-      phone,
-      id,
-      email,
-      address,
-      dob,
-      registerDate,
-      company_id,
-      photo_path,
-    ]);
+    const addLabourer = await query(
+      "SELECT insert_labourer($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+      [
+        fName,
+        lName,
+        nic,
+        phone,
+        id,
+        email,
+        address,
+        dob,
+        registerDate,
+        company_id,
+        photo_path,
+      ]
+    );
 
     if (addLabourer.rowCount > 0) {
       return addLabourer.rows[0];
@@ -309,7 +335,9 @@ export {
   getAllEmployeesDetails,
   employeeExists,
   employeeExistByType,
+  employeeExistById,
   labourerExists,
+  labourerExistById,
   getEmployeesCount,
   addLaboures,
   getAllLabourers,

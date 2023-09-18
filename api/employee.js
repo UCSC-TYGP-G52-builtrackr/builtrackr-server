@@ -10,8 +10,10 @@ import {
   getAllEmployees,
   existEmployee,
   existEmployeeByType,
+  existEmployeeById,
   getAllemployeesCount,
   existLabourer,
+  existLabourerById,
   addLabourer,
   getLabourers,
 } from "../controllers/employeeController.js";
@@ -23,7 +25,9 @@ employeeRouter.post("/getAllEmployees", getAllEmployees);
 employeeRouter.post("/employeeExists", existEmployee);
 employeeRouter.post("/employeeCount", getAllemployeesCount);
 employeeRouter.post("/labourerExists", existLabourer);
-employeeRouter.post("/hrExist", existEmployeeByType);
+employeeRouter.post("/labourerExistById", existLabourerById);
+employeeRouter.post("/employeeExistsByType", existEmployeeByType);
+employeeRouter.post("/EmployeeExistById", existEmployeeById);
 employeeRouter.post("/registerLabourer", addLabourer);
 employeeRouter.post("/getLabourers", getLabourers);
 employeeRouter.post("/hello", test);
