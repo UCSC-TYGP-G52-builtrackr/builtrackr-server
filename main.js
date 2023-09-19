@@ -9,6 +9,7 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
+import { navbarRouter } from './api/navbar.js';
 
 
 dotenv.config()
@@ -54,7 +55,7 @@ app.use('/api/employee',employeeRouter)
 
 //chamodi
 app.use('/api/site',siteRouter);
-
+app.use('/api/navbar',navbarRouter);
 
 
 

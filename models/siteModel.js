@@ -7,17 +7,21 @@ const addSite = async (
   siteDesc,
   siteType,
   siteClient,
+  siteAddr,
+  companyID
 ) => {
   
   const addSiteQuery =
-    "INSERT INTO consite ( site_name, site_desc, site_type, site_client ) VALUES ($1, $2, $3, $4)";
+    "INSERT INTO sites ( site_name, site_desc, site_type, client_id, site_addr, company_id ) VALUES ($1, $2, $3, $4, $5, $6)";
 
   try {
     const createSite = await query(addSiteQuery, [
       siteName,
       siteDesc,
       siteType,
-      siteClient
+      siteClient,
+      siteAddr,
+      companyID
     ]);
 
     if (createSite.rowCount > 0) {
@@ -60,10 +64,10 @@ const addCustomer = async (
   }
 };
 
-const siteDisplay = asyncHandler(async () => {
+const siteDisplay = asyncHandler(async (companyID) => {
   try {
-    const sitesQuery = "SELECT * FROM consite";
-    const result = await query(sitesQuery);
+    const sitesQuery = "SELECT * FROM sites WHERE company_id = $1";
+    const result = await query(sitesQuery, [companyID]);
     return result.rows;
   } catch (err) {
     throw new Error("Internal error");
@@ -72,7 +76,7 @@ const siteDisplay = asyncHandler(async () => {
 
 const singleSiteDisplay = asyncHandler(async (id) => {
   try {
-    const singleSiteQuery = "SELECT * FROM consite WHERE site_id = $1";
+    const singleSiteQuery = "SELECT * FROM sites WHERE site_id = $1";
     const result = await query(singleSiteQuery, [id]);
     return result.rows;
   } catch (err) {
@@ -126,7 +130,7 @@ const checkCustDetails = asyncHandler(async (email, password) => {
 
 const customerAllSites = asyncHandler(async (customerID) => {
   try {
-    const siteQuery = "SELECT * FROM consite WHERE site_client = $1";
+    const siteQuery = "SELECT * FROM sites WHERE site_client = $1";
     const result = await query(siteQuery, [customerID]);
     return result.rows;
   } catch (err) {
@@ -134,4 +138,47 @@ const customerAllSites = asyncHandler(async (customerID) => {
   }
 });
 
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites };
+const checkAssigned = asyncHandler(async (siteId) => {
+  try {
+    const checkAssignedQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e WHERE e.no IN (SELECT employee_id FROM site_manager WHERE site_id = $1)";
+    const result = await query(checkAssignedQuery, [siteId]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+const availManagers = asyncHandler(async (companyID) => {
+  try {
+    const managersFetchQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.employee_id IS NULL OR (SELECT COUNT(DISTINCT employee_id) FROM site_manager WHERE employee_id = e.no) = 1) AND e.company_id = $1";
+    // const managersFetchQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.site_id = 0 OR ( sm.site_id > 0  AND (SELECT COUNT(*) FROM site_manager sm2 WHERE sm2.employee_id = sm.employee_id AND sm2.site_id > 0) = 1))";
+    const result = await query(managersFetchQuery, [companyID]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+const assignManagerUpdate = asyncHandler(async (siteId, selectedPersonNo) => {
+  try {
+    // const updateSiteIDQuery = "UPDATE site_manager AS sm SET site_id = site_id + 1 WHERE employee_id = (SELECT e.no from employee AS e WHERE e.no = $1 AND e.company_id = $2)";
+    const updateSiteIDQuery = "INSERT INTO site_manager (employee_id, site_id) VALUES ($1, $2)";
+    const result = await query(updateSiteIDQuery, [selectedPersonNo, siteId]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+const unassignManagerUpdate = asyncHandler(async (siteId) => {
+  try {
+    // const updateSiteIDQuery = "UPDATE site_manager AS sm SET site_id = site_id + 1 WHERE employee_id = (SELECT e.no from employee AS e WHERE e.no = $1 AND e.company_id = $2)";
+    const unassignQuery = "DELETE FROM site_manager WHERE site_id = $1";
+    const result = await query(unassignQuery, [siteId]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate };

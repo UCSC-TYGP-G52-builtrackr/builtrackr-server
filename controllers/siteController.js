@@ -7,6 +7,10 @@ import {
   fetchAllCustomers,
   checkCustDetails,
   customerAllSites,
+  checkAssigned,
+  availManagers,
+  assignManagerUpdate,
+  unassignManagerUpdate
 } from "../models/siteModel.js";
 
 const addNewSite = asyncHandler(async (req, res) => {
@@ -14,7 +18,9 @@ const addNewSite = asyncHandler(async (req, res) => {
       siteName,
       siteDesc,
       siteType,
-      siteClient
+      siteClient,
+      siteAddr,
+      companyID
     } = req.body;
   
     console.log(req.body);
@@ -25,6 +31,8 @@ const addNewSite = asyncHandler(async (req, res) => {
         siteDesc,
         siteType,
         siteClient,
+        siteAddr,
+        companyID
       );
       res.status(200).json({
         // id: site.siteId,
@@ -62,7 +70,11 @@ const addNewSite = asyncHandler(async (req, res) => {
   });
 
   const getSitesToDisplay = asyncHandler(async (req, res) => {
-    const result = await siteDisplay();
+    const {
+      companyID
+    } = req.body;
+    console.log(req.body);
+    const result = await siteDisplay(companyID);
     res.status(200).json(result);
   });
 
@@ -89,4 +101,32 @@ const addNewSite = asyncHandler(async (req, res) => {
     res.status(200).json(result);
   });
 
-  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites };
+  const checkWhetherAssigned = asyncHandler(async (req, res) => {
+    const {
+      siteId
+    } = req.body;
+    const result = await checkAssigned(siteId);
+    res.status(200).json(result);
+  });
+
+  const getManagers = asyncHandler(async (req, res) => {
+    const {
+      companyID
+    } = req.body;
+    const result = await availManagers(companyID);
+    res.status(200).json(result);
+  });
+
+  const assignSiteManager = asyncHandler(async (req, res) => {
+    const { siteId, selectedPersonNo } = req.body;
+    const result = await assignManagerUpdate(siteId, selectedPersonNo);
+    res.status(200).json(result);
+  });
+
+  const unassignSiteManager = asyncHandler(async (req, res) => {
+    const { siteId } = req.body;
+    const result = await unassignManagerUpdate(siteId);
+    res.status(200).json(result);
+  });
+
+  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager };
