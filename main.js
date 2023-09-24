@@ -15,7 +15,7 @@ import { navbarRouter } from './api/navbar.js';
 dotenv.config()
 
 
-// import { paymentRouter } from './api/payment.js';
+import { paymentRouter } from './api/payment.js'
 dotenv.config()
 connectDB(); 
 
@@ -45,7 +45,7 @@ app.use('/api/drop', dropRouter);
 
 //nilshan
 app.use('/api/employee',employeeRouter)
-
+app.use('/api/payment',paymentRouter)
 
 
 

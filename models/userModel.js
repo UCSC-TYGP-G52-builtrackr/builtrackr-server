@@ -122,7 +122,7 @@ const addeUserRole = asyncHandler(async (name, type, id) => {
   if (type === 2) {
     image = "Inventory.jpeg";
   } else if (type === 3) {
-    image = "CheifEnigineer.jpeg";
+    image = "CheifEngineer.jpeg";
   } else if (type === 4) {
     image = "SiteEngineer.jpeg";
   } else if (type === 5) {
