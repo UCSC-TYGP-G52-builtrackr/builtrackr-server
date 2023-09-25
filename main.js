@@ -68,7 +68,7 @@ app.use('/api/site',siteRouter);
 
 //sadun
 app.use('/api/material', iManagerRouter )
-app.use('/api/equipments', iManagerERouter)
+app.use('/api/equipment', iManagerERouter)
 
 
 
