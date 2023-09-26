@@ -1,6 +1,4 @@
-import { addTask,getAllTasks } from "../models/taskModel.js"
-//simple middleware  for handling exceptions inside of async express root
-//and passing them to ur express error handler
+import { addTask,getAllTasks,deleteTask } from "../models/taskModel.js"
 import asyncHandler from 'express-async-handler'
 
 
@@ -27,4 +25,24 @@ const ViewTask = asyncHandler(async (req, res) => {
     res.status(200).json(tasks)    //tasks send to the front end
 
 })
-export { AddTask,ViewTask }
+
+const DeleteTask = asyncHandler(async (req, res) => {
+    const { id } = req.query
+    const task = await deleteTask(id)
+    console.log(req.query);
+    if (task) {
+        res.status(201).json({
+            id: task.task_id,
+            taskName: task.task_name,
+            specialInformation: task.special_information,
+            dueDate: task.due_date,
+        })
+
+    }
+    else {
+        res.status(400)
+        throw new Error('Invalid task data')
+    }
+})
+
+export { AddTask,ViewTask,DeleteTask }
