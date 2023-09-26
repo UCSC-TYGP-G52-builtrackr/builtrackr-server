@@ -14,6 +14,11 @@ import{labourRouter} from './api/labour.js';
 import { equipmentRouter } from './api/equipment.js';
 import { leaveRouter } from './api/leave.js';
 import {fileuploadRouter} from './api/fileupload.js';
+import { commentRouter } from './api/comment.js';
+import { kanbanboardRouter } from './api/kanbanbord.js';
+import  {cardInfoRouter} from './api/cardInfo.js';
+import { imageUploadRouter } from './api/imageUpload.js';
+import {imageRouter} from './api/image.js';
 
 dotenv.config()
 
@@ -46,6 +51,12 @@ app.use('/api/labour', labourRouter);
 app.use('/api/equipment', equipmentRouter);
 app.use('/api/leave', leaveRouter);
 app.use('/api/fileupload', fileuploadRouter);
+app.use('/api/comment', commentRouter);
+app.use('/api/kanbanbord', kanbanboardRouter);
+app.use('/api/cardInfo', cardInfoRouter);
+app.use('/api/imageUpload', imageUploadRouter);
+app.use('/api/image', imageRouter);
+
 
 
 

@@ -14,6 +14,9 @@ fileuploadRouter.post('', upload.single('document'), (req, res) => {
     res.send("Image Uploaded");
 });
 
+
+
+
 // this is the code for get documents from document folder
 fileuploadRouter.get('/getpdfs', (req, res) => {
     // get all the files inside upload folder
