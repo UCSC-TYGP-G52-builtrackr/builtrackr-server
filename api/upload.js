@@ -18,6 +18,7 @@ const __dirname = path.resolve();
 
 uploadRouter.post('', upload.single('document'), (req, res) => {
     res.send("Image Uploaded");
+    
 });
 
 // this is the code for get documents from document folder
