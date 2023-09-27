@@ -13,7 +13,7 @@ import {labourLeaveRouter} from './api/labourleave.js'
 
 import { iManagerRouter } from './api/mCard.js';
 import { iManagerERouter } from './api/eCard.js';
-
+import { iManagerMRRouter } from './api/mRequest.js';
 dotenv.config()
 
 
@@ -69,6 +69,7 @@ app.use('/api/site',siteRouter);
 //sadun
 app.use('/api/material', iManagerRouter )
 app.use('/api/equipment', iManagerERouter)
+app.use('/api/mrequest', iManagerMRRouter)
 
 
 
