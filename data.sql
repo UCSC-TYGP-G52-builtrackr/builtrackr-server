@@ -62,11 +62,34 @@ CREATE TABLE employee (
 	FOREIGN KEY (company_id) REFERENCES users(company_id)
 );
 
-SELECT
-    e.*,
-	u.role_name
-FROM
-    employee as e
-INNER JOIN user_roles as u
-    ON e.type=u.type AND e.company_id=u.company_id
-WHERE e.company_id = 1 
+CREATE OR REPLACE FUNCTION add_employee(
+  f_name VARCHAR,
+  l_name VARCHAR,
+  nic VARCHAR,
+  tel_no VARCHAR,
+  employee_id INTEGER,
+  email VARCHAR,
+  address VARCHAR,
+  dob DATE,
+  register_date DATE,
+  hashed_password VARCHAR,
+  company_id INTEGER,
+  type INTEGER
+)
+RETURNS INTEGER AS $$
+DECLARE
+  first_table_id INTEGER;
+BEGIN
+  -- First table insertion
+  INSERT INTO employee (f_name, l_name, nic, tel_no, id, email, address, dob, register_date, password, company_id, type)
+  VALUES (f_name, l_name, nic, tel_no, employee_id, email, address, dob, register_date, hashed_password, company_id, type)
+  RETURNING no INTO first_table_id;
+
+  -- Second table insertion using the primary key from the first table
+  INSERT INTO site_manager (employee_id)
+  VALUES (first_table_id);
+
+  -- Return the primary key of the first insertion
+  RETURN first_table_id;
+END;
+$$ LANGUAGE plpgsql;

@@ -13,8 +13,18 @@ const storage = diskStorage({
       cb(null, file.originalname);
     },
   });
+  const storage1 = diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/employees/'); // Specify the destination directory for uploaded files
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname); 
+      // Customize the file name if needed
+    }
+  });
 
 const upload = multer({ storage: storage });
+const upload1 = multer({ storage: storage1 });
 
 
 const uploadDir2 = 'uploads/Supervisor/uploads';
@@ -35,4 +45,4 @@ const upload2 = multer({ storage: storage2 });
 
 
 
-export { upload , upload2 }
+export { upload ,upload1, upload2 }

@@ -6,4 +6,5 @@ siteRouter.post("/addSite", addNewSite);
 siteRouter.post("/getSites", getSitesToDisplay);
 siteRouter.post("/getSingleSite", getSingleSiteData);
 
+
 export {siteRouter}
