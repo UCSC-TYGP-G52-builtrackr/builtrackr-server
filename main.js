@@ -11,6 +11,8 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
+import { navbarRouter } from './api/navbar.js';
+import { warehouseCERouter } from './api/warehouseCE.js';
 import {requestRouter} from './api/requests.js';
 import{labourRouter} from './api/labour.js';
 import { equipmentRouter } from './api/equipment.js';
@@ -90,8 +92,8 @@ app.use("/api/payment", paymentRouter);
 
 //chamodi
 app.use('/api/site',siteRouter);
-
-
+app.use('/api/navbar',navbarRouter);
+app.use('/api/warehouseCE',warehouseCERouter);
 app.get("/config", (req, res) => {
     res.send({
       publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
