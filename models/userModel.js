@@ -16,21 +16,66 @@ const userExists = async (email) => {
 // login user with the given email and password
 const loginUser = asyncHandler(async (email, password) => {
   const userDetailsQuery = "SELECT * FROM users WHERE company_email = $1";
-
+  const employeeDetailsQuery =
+    "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
+  console.log("1")
   try {
     const userDetails = await query(userDetailsQuery, [email]);
+    const employeeDetails = await query(employeeDetailsQuery, [email]);
+console.log("2")
     if (userDetails.rowCount > 0) {
+      console.log("3")
       const user = userDetails.rows[0];
       const matchPassword = await bcrypt.compare(password, user.password);
       if (matchPassword) {
+        console.log("4")
         return user;
       } else {
-        return ("Password was Incoorect");
+        console.log("5")
+        return "Password was Incorect";
+      }
+    } else if (employeeDetails.rowCount > 0) {
+      console.log("6")
+      const employee = employeeDetails.rows[0];
+      const matchPassword2 = await bcrypt.compare(password, employee.password);
+      if (matchPassword2) {
+        console.log("7")
+        return employee;
+      } else {
+        console.log("8")
+        return "Password was Incorect";
       }
     } else {
-      return ("Email does not exist");
+      console.log("9")
+      const employeeDetailsQuery2 =
+        "SELECT *,'HR Manager' AS role_name FROM employee  WHERE email = $1";
+      try {
+        console.log("10");
+        const employeeDetails2 = await query(employeeDetailsQuery2, [email]);
+        if (employeeDetails2.rowCount > 0) {
+          console.log("11")
+          const employee2 = employeeDetails2.rows[0];
+          const matchPassword3 = await bcrypt.compare(
+            password,
+            employee2.password
+          );
+          if (matchPassword3) {
+            console.log("12")
+            return employee2;
+          } else {
+            console.log("13")
+            return "Password was Incorect";
+          }
+        } else {
+          console.log("14")
+          return "Email does not exist";
+        }
+      } catch (err) {
+        throw new Error("Internal Error");
+      }
     }
   } catch (err) {
+    console.log("15")
     throw new Error("Internal Error");
   }
 });
@@ -48,8 +93,7 @@ const regUser = asyncHandler(
     username,
     password,
     company_id,
-    type,
-    
+    type
   ) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -68,7 +112,6 @@ const regUser = asyncHandler(
       username,
       hashedPassword,
       type,
-      
     ]);
     if (createUser.rowCount > 0) {
       // Upload file
@@ -122,7 +165,7 @@ const addeUserRole = asyncHandler(async (name, type, id) => {
   if (type === 2) {
     image = "Inventory.jpeg";
   } else if (type === 3) {
-    image = "CheifEnigineer.jpeg";
+    image = "CheifEngineer.jpeg";
   } else if (type === 4) {
     image = "SiteEngineer.jpeg";
   } else if (type === 5) {

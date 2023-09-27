@@ -10,8 +10,8 @@ const pool = new Pool({
   database: process.env.DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-   ssl: {
-     rejectUnauthorized: false // Add this line to disable SSL certificate verification
+  ssl: {
+    rejectUnauthorized: false // Add this line to disable SSL certificate verification
   }
 })
 

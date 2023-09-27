@@ -19,3 +19,11 @@
 //   });
   
 // export {paymentRouter}
+
+import {router as paymentRouter} from "./index.js";
+import { currentPayment } from "../controllers/paymentController.js";
+
+paymentRouter.post('/currentPayment',currentPayment)
+
+
+export {paymentRouter}
