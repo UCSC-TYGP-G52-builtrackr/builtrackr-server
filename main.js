@@ -1,17 +1,18 @@
 import { app } from "./core/init.js";
-import cors from "cors";
 import http from "http";
 import { Server as WebSocketServer } from "socket.io";
-import { userRouter } from "./api/user.js";
-import { siteRouter } from "./api/site.js";
-import { employeeRouter } from "./api/employee.js";
-import { taskRouter } from "./api/task.js";
-import { siteManagerRouter } from "./api/sitemanger.js";
-import { uploadRouter } from "./api/upload.js";
-import { connectDB, query } from "./config/db.js";
-import dotenv from "dotenv";
-import { cardRouter } from "./api/card.js";
-import { dropRouter } from "./api/drop.js";
+import {userRouter} from './api/user.js';
+import { siteRouter } from './api/site.js';
+import { employeeRouter } from './api/employee.js';
+import {taskRouter} from './api/task.js';
+import {siteManagerRouter} from './api/sitemanger.js';
+import {uploadRouter} from './api/upload.js';
+import { connectDB,query } from './config/db.js'
+import dotenv from 'dotenv'
+import { cardRouter } from './api/card.js';
+import { dropRouter } from './api/drop.js';
+import {labourLeaveRouter} from './api/labourleave.js'
+
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/api/task", taskRouter);
 app.use("/api/sitemanager", siteManagerRouter);
 app.use("/api/upload", uploadRouter);
 // app.use('/api/payment', paymentRouter);
+app.use('/api/labourleave',labourLeaveRouter)
 
 //govindani
 
