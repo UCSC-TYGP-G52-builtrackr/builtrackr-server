@@ -10,6 +10,7 @@ import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
 import { navbarRouter } from './api/navbar.js';
+import { warehouseCERouter } from './api/warehouseCE.js';
 
 
 dotenv.config()
@@ -56,7 +57,7 @@ app.use('/api/payment',paymentRouter)
 //chamodi
 app.use('/api/site',siteRouter);
 app.use('/api/navbar',navbarRouter);
-
+app.use('/api/warehouseCE',warehouseCERouter);
 
 
 
