@@ -11,9 +11,19 @@ import { connectDB,query } from './config/db.js'
 import dotenv from 'dotenv'
 import { cardRouter } from './api/card.js';
 import { dropRouter } from './api/drop.js';
+import {requestRouter} from './api/requests.js';
+import{labourRouter} from './api/labour.js';
+import { equipmentRouter } from './api/equipment.js';
+import { leaveRouter } from './api/leave.js';
+import {fileuploadRouter} from './api/fileupload.js';
+import { commentRouter } from './api/comment.js';
+import { kanbanboardRouter } from './api/kanbanbord.js';
+import  {cardInfoRouter} from './api/cardInfo.js';
+import { imageUploadRouter } from './api/imageUpload.js';
+import {imageRouter} from './api/image.js';
 import {labourLeaveRouter} from './api/labourleave.js'
 import Stripe from 'stripe';
-import { laborRouter } from './api/labor.js';
+// import { laborRouter } from './api/labor.js';
 
 // const stripe = require("stripe")(
 //     process.env.STRIPE_SECRET_KEY, {
@@ -56,8 +66,23 @@ app.use('/api/labor',laborRouter);
 
 //govindani
 
-app.use("/api/card", cardRouter);
-app.use("/api/drop", dropRouter);
+app.use('/api/card', cardRouter);
+app.use('/api/drop', dropRouter);
+app.use('/api/requests', requestRouter);
+app.use('/api/labour', labourRouter);
+app.use('/api/equipment', equipmentRouter);
+app.use('/api/leave', leaveRouter);
+app.use('/api/fileupload', fileuploadRouter);
+app.use('/api/comment', commentRouter);
+app.use('/api/kanbanbord', kanbanboardRouter);
+app.use('/api/cardInfo', cardInfoRouter);
+app.use('/api/imageUpload', imageUploadRouter);
+app.use('/api/image', imageRouter);
+
+
+
+
+
 
 //nilshan
 app.use("/api/employee", employeeRouter);
