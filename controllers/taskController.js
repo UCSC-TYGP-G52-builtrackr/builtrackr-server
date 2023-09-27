@@ -1,4 +1,4 @@
-import { addTask,getAllTasks,deleteTask } from "../models/taskModel.js"
+import { addTask,getAllTasks,deleteTask,taskCount,taskCompletion,rejectTask} from "../models/taskModel.js"
 import asyncHandler from 'express-async-handler'
 
 
@@ -45,4 +45,24 @@ const DeleteTask = asyncHandler(async (req, res) => {
     }
 })
 
-export { AddTask,ViewTask,DeleteTask }
+const TaskCount = asyncHandler(async (req, res) => {
+    const tasks = await taskCount()
+    res.status(200).json(tasks)    //tasks send to the front end
+
+})
+
+const TaskCompletion = asyncHandler(async (req, res) => {
+    const tasks = await taskCompletion()
+    res.status(200).json(tasks)    //tasks send to the front end
+
+})
+
+const RejectTask = asyncHandler(async (req, res) => {
+   const tasks = await rejectTask()
+    res.status(200).json(tasks)
+
+})
+
+
+
+export { AddTask,ViewTask,DeleteTask,TaskCount,TaskCompletion,RejectTask}

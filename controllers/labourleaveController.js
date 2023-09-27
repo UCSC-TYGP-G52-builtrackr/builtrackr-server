@@ -1,4 +1,4 @@
-import {getLeaves,approveLeave,declineLeave} from '../models/labourModel.js'
+import {getLeaves,approveLeave,declineLeave,leaveData,getStatus,leaveCount} from '../models/labourModel.js'
 import asyncHandler from 'express-async-handler'
 
 const GetLeaves = asyncHandler(async (req, res) => {
@@ -21,5 +21,23 @@ const DeclineLeave = asyncHandler(async (req, res) => {
 
 })
 
+const LeaveData = asyncHandler(async (req, res) => {
+    const leaves = await getLeaves()
+    res.status(200).json(leaves)    //tasks send to the front end
 
-export {GetLeaves,ApproveLeave,DeclineLeave}
+})
+
+const GetStatus = asyncHandler(async (req, res) => {
+    const status = await getStatus()
+    res.status(200).json(status)    //tasks send to the front end
+
+})
+
+const LeaveCount = asyncHandler(async (req, res) => {
+    const count = await leaveCount()
+    res.status(200).json(count)    //tasks send to the front end
+    
+})
+
+
+export {GetLeaves,ApproveLeave,DeclineLeave,LeaveData,GetStatus,LeaveCount}
