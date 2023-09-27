@@ -27,17 +27,13 @@ import {labourLeaveRouter} from './api/labourleave.js'
 import Stripe from 'stripe';
 // import { laborRouter } from './api/labor.js';
 
-// const stripe = require("stripe")(
-//     process.env.STRIPE_SECRET_KEY, {
-//     apiVersion: "2022-08-01",
-//   });
-
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY,{
     apiVersion: "2022-08-01"
   })
 
-
-
+import { iManagerRouter } from './api/mCard.js';
+import { iManagerERouter } from './api/eCard.js';
+import { iManagerMRRouter } from './api/mRequest.js';
 import { paymentRouter } from "./api/payment.js";
 dotenv.config();
 connectDB();
@@ -126,6 +122,16 @@ app.get("/config", (req, res) => {
 
 
 //sadun
+app.use('/api/material', iManagerRouter )
+app.use('/api/equipment', iManagerERouter)
+app.use('/api/mrequest', iManagerMRRouter)
+
+
+
+
+
+
+
 
 //rumindu
 
