@@ -90,4 +90,17 @@ export const updateCardInfoTitle = async (titles) => {
     return result;
 }
 
-export default { insertCardInfo,selectCardInfo,insertCardInfoTask,selectCardInfoTask,updateCardInfoTask,updateCardInfoDescription, updateCardInfoTitle};
+export const updateCardInfoDate = async (dates) => {
+    const {date,cardId} = dates;
+    console.log("card values",dates);
+    const result = await query(
+        'UPDATE "Card" SET date = $1 WHERE id =$2  RETURNING date',
+    [date,cardId]
+    );
+    return result;
+}
+
+
+export default { insertCardInfo,selectCardInfo,insertCardInfoTask,
+    selectCardInfoTask,updateCardInfoTask,updateCardInfoDescription,
+     updateCardInfoTitle ,updateCardInfoDate};

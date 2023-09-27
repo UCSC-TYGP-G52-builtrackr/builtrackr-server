@@ -1,4 +1,4 @@
-import { viewEquipments,updateEquipment } from "../models/equipmentModel.js";
+import { viewEquipments,updateEquipment ,updateAvailable} from "../models/equipmentModel.js";
 import asyncHandler from "express-async-handler";
 
 
@@ -25,6 +25,15 @@ const ViewEquipments = asyncHandler(async (req, res) => {
 
 });
 
+const UpdateEquipmentAvailable = asyncHandler(async (req, res) => {
+    const id = req.body.itemId
+    console.log(id)
+    const employee = await updateAvailable(id)
+    res.status(200).json(employee)    //tasks send to the front end
+
+})
 
 
-export { ViewEquipments ,updateEquipmentInfo}
+
+
+export { ViewEquipments ,updateEquipmentInfo,UpdateEquipmentAvailable}

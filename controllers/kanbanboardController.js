@@ -1,4 +1,5 @@
-import { insertBoard,selectBoard, insertCard,selectCard, deleteCard, deleteBoard } from "../models/kanbanboardModel.js";
+import { insertBoard,selectBoard, insertCard,selectCard, 
+    deleteCard, deleteBoard, cardCompleted, updateTaskcardId} from "../models/kanbanboardModel.js";
 import asyncHandler from "express-async-handler";
 
 
@@ -25,6 +26,7 @@ export const getBoard = asyncHandler(async (req, res) => {
     res.status(200).json(board)    //tasks send to the front end
 
 })
+
 
 //insert card
 
@@ -89,8 +91,46 @@ export const deleteBoardInfo = asyncHandler(async (req, res) => {
 
 });
 
+export const cardCompletedInfo = asyncHandler(async (req, res) => {
+    const {cardId,boardId}  = req.body;
+    console.log("board",req.body);
+    try {
+        const boardChange = await cardCompleted (
+            {cardId,boardId}
+
+        )
+        res.status(201).json({
+            status: true,
+        });
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }
+
+});
+
+export const updateTaskId = asyncHandler(async (req, res) => {
+    const {taskId,id}  = req.body;
+    console.log("card",req.body);
+    try {
+        const taskIdChange = await updateTaskcardId (
+            {taskId,id}
+
+        )
+        res.status(201).json({
+            status: true,
+        });
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }
+
+});
 
 
 
 
-export default { addBoard,getBoard , addCard,getCard , deleteCardInfo , deleteBoardInfo};
+
+
+export default { addBoard,getBoard , addCard,getCard ,
+     deleteCardInfo , deleteBoardInfo, cardCompletedInfo , updateTaskId};

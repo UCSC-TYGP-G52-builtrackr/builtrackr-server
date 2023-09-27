@@ -26,6 +26,7 @@ return queryResult.rows
     }
 }
 
+
 export const insertCard = async (card) => {
     const { title, date, companyId, supervisorId, boardId } = card;
     const result = await query(
@@ -80,8 +81,31 @@ export const deleteBoard = async (board) => {
 }
 
 
+export const cardCompleted = async (boardChange) => {
+    const { cardId, boardId } = boardChange;
+    const result = await query(
+        'UPDATE "Card" SET "boardId" = $1 WHERE id =$2  RETURNING "boardId"',
+    [boardId, cardId]
+    );
+    return result;
+}
+
+export const updateTaskcardId = async (taskIdChange) => {
+
+    const { taskId, id } = taskIdChange;
+    const result = await query(
+        'UPDATE "Card" SET "taskId" = $1 WHERE id =$2  RETURNING "taskId"',
+    [taskId,id]
+    );
+    return result;
+
+
+
+}
 
 
 
 
-export default {insertBoard, selectBoard,insertCard, selectCard, deleteCard, deleteBoard}
+
+export default {insertBoard, selectBoard,insertCard, 
+    selectCard, deleteCard, deleteBoard,cardCompleted,updateTaskcardId}

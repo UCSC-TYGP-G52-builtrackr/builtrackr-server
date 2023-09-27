@@ -1,5 +1,5 @@
 import  {insertCardInfo,selectCardInfo, insertCardInfoTask,selectCardInfoTask,
-    updateCardInfoTask, updateCardInfoDescription, updateCardInfoTitle} from "../models/cardInfoModel.js";
+    updateCardInfoTask, updateCardInfoDescription, updateCardInfoTitle,updateCardInfoDate} from "../models/cardInfoModel.js";
 import asyncHandler from "express-async-handler";
 
 
@@ -111,8 +111,26 @@ export const updateCardTitle = asyncHandler(async (req, res) => {
 
 });
 
+export const updateCardDate = asyncHandler(async (req, res) => {
+    const {date,cardId} = req.body;
+    console.log(req.body);
+    try {
+        const dates = await updateCardInfoDate({
+            date,cardId
+        });
+        res.status(201).json({
+            status: true,
+        });
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }
+
+});
+
+
 
 
 
 export default { addCardInfo,getCardInfo,addCardInfoTask,
-    getCardInfoTask,updateCardInfo,updateCardInfoDesc,updateCardTitle};
+    getCardInfoTask,updateCardInfo,updateCardInfoDesc,updateCardTitle,updateCardDate};
