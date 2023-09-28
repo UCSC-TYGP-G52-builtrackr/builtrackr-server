@@ -181,4 +181,16 @@ const unassignManagerUpdate = asyncHandler(async (siteId) => {
   }
 });
 
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate };
+//model for customer mobile sites
+const getSiteDetail = asyncHandler(async (siteId) => {
+  try {
+  const siteQuery = "Select * from sites s inner join customer c on s.site_id = c.site_id where c.cust_id = $1";
+  const result = await query(siteQuery, [siteId]);
+  return result.rows;
+  }
+  catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, getSiteDetail };
