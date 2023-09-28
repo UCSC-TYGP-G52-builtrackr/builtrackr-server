@@ -5,10 +5,11 @@ import {
 
   const getCompanyName = asyncHandler(async (req, res) => {
     const {
-      companyID
+      companyID,
+      employeeNo
     } = req.body;
     console.log(req.body);
-    const result = await fetchCompName(companyID);
+    const result = await fetchCompName(companyID, employeeNo);
     res.status(200).json(result);
   });
 

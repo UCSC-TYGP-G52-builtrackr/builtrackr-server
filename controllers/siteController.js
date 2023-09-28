@@ -11,7 +11,8 @@ import {
   availManagers,
   assignManagerUpdate,
   unassignManagerUpdate,
-  getSiteDetail
+  allManagers,
+  selectedManager
 } from "../models/siteModel.js";
 
 const addNewSite = asyncHandler(async (req, res) => {
@@ -130,11 +131,4 @@ const addNewSite = asyncHandler(async (req, res) => {
     res.status(200).json(result);
   });
 
-  const getSiteDetails = asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const { id } = req.body;
-    const result = await getSiteDetail (id);
-    res.status(200).json(result);
-  });
-
-  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager, getSiteDetails };
+  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager };
