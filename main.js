@@ -1,39 +1,39 @@
 import { app } from "./core/init.js";
 import http from "http";
 import { Server as WebSocketServer } from "socket.io";
-import {userRouter} from './api/user.js';
-import { siteRouter } from './api/site.js';
-import { employeeRouter } from './api/employee.js';
-import {taskRouter} from './api/task.js';
-import {siteManagerRouter} from './api/sitemanger.js';
-import {uploadRouter} from './api/upload.js';
-import { connectDB,query } from './config/db.js'
-import dotenv from 'dotenv'
-import { cardRouter } from './api/card.js';
-import { dropRouter } from './api/drop.js';
-import { navbarRouter } from './api/navbar.js';
-import { warehouseCERouter } from './api/warehouseCE.js';
-import {requestRouter} from './api/requests.js';
-import{labourRouter} from './api/labour.js';
-import { equipmentRouter } from './api/equipment.js';
-import { leaveRouter } from './api/leave.js';
-import {fileuploadRouter} from './api/fileupload.js';
-import { commentRouter } from './api/comment.js';
-import { kanbanboardRouter } from './api/kanbanbord.js';
-import  {cardInfoRouter} from './api/cardInfo.js';
-import { imageUploadRouter } from './api/imageUpload.js';
-import {imageRouter} from './api/image.js';
-import {labourLeaveRouter} from './api/labourleave.js'
-import Stripe from 'stripe';
-// import { laborRouter } from './api/labor.js';
+import { userRouter } from "./api/user.js";
+import { siteRouter } from "./api/site.js";
+import { employeeRouter } from "./api/employee.js";
+import { taskRouter } from "./api/task.js";
+import { siteManagerRouter } from "./api/sitemanger.js";
+import { uploadRouter } from "./api/upload.js";
+import { connectDB, query } from "./config/db.js";
+import dotenv from "dotenv";
+import { cardRouter } from "./api/card.js";
+import { dropRouter } from "./api/drop.js";
+import { navbarRouter } from "./api/navbar.js";
+import { warehouseCERouter } from "./api/warehouseCE.js";
+import { requestRouter } from "./api/requests.js";
+import { labourRouter } from "./api/labour.js";
+import { equipmentRouter } from "./api/equipment.js";
+import { leaveRouter } from "./api/leave.js";
+import { fileuploadRouter } from "./api/fileupload.js";
+import { commentRouter } from "./api/comment.js";
+import { kanbanboardRouter } from "./api/kanbanbord.js";
+import { cardInfoRouter } from "./api/cardInfo.js";
+import { imageUploadRouter } from "./api/imageUpload.js";
+import { imageRouter } from "./api/image.js";
+import { labourLeaveRouter } from "./api/labourleave.js";
+import Stripe from "stripe";
+import { laborRouter } from "./api/labor.js";
 
-  const stripe = Stripe(process.env.STRIPE_SECRET_KEY,{
-    apiVersion: "2022-08-01"
-  })
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-08-01",
+});
 
-import { iManagerRouter } from './api/mCard.js';
-import { iManagerERouter } from './api/eCard.js';
-import { iManagerMRRouter } from './api/mRequest.js';
+import { iManagerRouter } from "./api/mCard.js";
+import { iManagerERouter } from "./api/eCard.js";
+import { iManagerMRRouter } from "./api/mRequest.js";
 import { paymentRouter } from "./api/payment.js";
 dotenv.config();
 connectDB();
@@ -52,123 +52,103 @@ app.use("/api/task", taskRouter);
 app.use("/api/sitemanager", siteManagerRouter);
 app.use("/api/upload", uploadRouter);
 // app.use('/api/payment', paymentRouter);
-app.use('/api/labourleave',labourLeaveRouter)
-app.use('/api/labor',laborRouter);
-
-
-
-
-
-
-
+app.use("/api/labourleave", labourLeaveRouter);
+app.use("/api/labor", laborRouter);
 
 //govindani
 
-app.use('/api/card', cardRouter);
-app.use('/api/drop', dropRouter);
-app.use('/api/requests', requestRouter);
-app.use('/api/labour', labourRouter);
-app.use('/api/equipment', equipmentRouter);
-app.use('/api/leave', leaveRouter);
-app.use('/api/fileupload', fileuploadRouter);
-app.use('/api/comment', commentRouter);
-app.use('/api/kanbanbord', kanbanboardRouter);
-app.use('/api/cardInfo', cardInfoRouter);
-app.use('/api/imageUpload', imageUploadRouter);
-app.use('/api/image', imageRouter);
-
-
-
-
-
+app.use("/api/card", cardRouter);
+app.use("/api/drop", dropRouter);
+app.use("/api/requests", requestRouter);
+app.use("/api/labour", labourRouter);
+app.use("/api/equipment", equipmentRouter);
+app.use("/api/leave", leaveRouter);
+app.use("/api/fileupload", fileuploadRouter);
+app.use("/api/comment", commentRouter);
+app.use("/api/kanbanbord", kanbanboardRouter);
+app.use("/api/cardInfo", cardInfoRouter);
+app.use("/api/imageUpload", imageUploadRouter);
+app.use("/api/image", imageRouter);
 
 //nilshan
 app.use("/api/employee", employeeRouter);
 app.use("/api/payment", paymentRouter);
 
 //chamodi
-app.use('/api/site',siteRouter);
-app.use('/api/navbar',navbarRouter);
-app.use('/api/warehouseCE',warehouseCERouter);
+app.use("/api/site", siteRouter);
+app.use("/api/navbar", navbarRouter);
+app.use("/api/warehouseCE", warehouseCERouter);
 app.get("/config", (req, res) => {
-    res.send({
-      publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  res.send({
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
+});
+
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      currency: "EUR",
+      amount: 1999,
+      automatic_payment_methods: { enabled: true },
     });
-  });
-  
-  app.post("/create-payment-intent", async (req, res) => {
-    try {
-      const paymentIntent = await stripe.paymentIntents.create({
-        currency: "EUR",
-        amount: 1999,
-        automatic_payment_methods: { enabled: true },
-      });
-  
-      // Send publishable key and PaymentIntent details to client
-      res.send({
-        clientSecret: paymentIntent.client_secret,
-      });
-    } catch (e) {
-      return res.status(400).send({
-        error: {
-          message: e.message,
-        },
-      });
-    }
-  });
 
-
-
-
+    // Send publishable key and PaymentIntent details to client
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (e) {
+    return res.status(400).send({
+      error: {
+        message: e.message,
+      },
+    });
+  }
+});
 
 //sadun
-app.use('/api/material', iManagerRouter )
-app.use('/api/equipment', iManagerERouter)
-app.use('/api/mrequest', iManagerMRRouter)
-
-
-
-
-
-
-
+app.use("/api/material", iManagerRouter);
+app.use("/api/equipment", iManagerERouter);
+app.use("/api/mrequest", iManagerMRRouter);
 
 //rumindu
 
 let onlineUsers = [];
 
 const addNewUser = (employeeNo, socketId) => {
-  console.log(employeeNo, socketId);
+  console.log("Adding new user:", employeeNo, socketId);
   !onlineUsers.some((user) => user.employeeNo === employeeNo) &&
     onlineUsers.push({ employeeNo, socketId });
   console.log(onlineUsers);
 };
-
 
 const removeUser = (socketId) => {
   onlineUsers = onlineUsers.filter((user) => user.socketId !== socketId);
 };
 
 const getUser = (employeeNo) => {
+  
   console.log(employeeNo);
-  return onlineUsers.find((user) => user.employeeNo === employeeNo);
+  console.log(onlineUsers);
+  console.log(onlineUsers.find((user) => user.employeeNo == employeeNo))
+  return onlineUsers.find((user) => user.employeeNo == employeeNo);
 };
 
 // WebSocket server logic
 io.on("connection", (socket) => {
   socket.on("newUser", async (employeeNo) => {
     console.log(socket.id);
-    await addNewUser(employeeNo, socket.id);
+    addNewUser(employeeNo, socket.id);
   });
 
   socket.on("sendTaskNotification", ({ reciver, sender }) => {
     const toUser = getUser(reciver);
     console.log(reciver, sender);
-    io.to(toUser.socketId).emit("getTaskNotification", {
+    io.to(toUser?.socketId).emit("getTaskNotification", {
       sender: sender,
       reciver: reciver,
       msg: "Task 01 added for you.",
     });
+    console.log(onlineUsers);
   });
 
   // io.emit("First event", "This a test")
