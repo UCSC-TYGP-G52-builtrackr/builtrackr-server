@@ -40,11 +40,11 @@ const DeleteTask = asyncHandler(async (req, res) => {
 });
 
 const SupervisorTask = asyncHandler(async (req, res) => {
-  const { employeeId } = req.body;
+  const { employeeNo } = req.body;
   try {
     const result = await TaskOfSupervisor(employeeId);
     if(result !== "Not Data"){
-        res.status(200).json({result})
+        res.status(200).json(result)
     }else{
         res.status(200).json("No Data")
     }

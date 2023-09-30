@@ -116,7 +116,7 @@ const checkCustDetails = asyncHandler(async (email, password) => {
     if (employeeResult.rows.length > 0) {
       const employee = employeeResult.rows[0];
       if (password === employee.password) {
-        return { success: true, message: 'Password is correct', employeeID: employee.id, userType: 'supervisor' };
+        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor' };
       } else {
         return { success: false, message: 'Incorrect password' };
       }
