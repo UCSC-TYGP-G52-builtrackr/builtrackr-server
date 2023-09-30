@@ -14,25 +14,26 @@ import {
 } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
-const existUser = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-  console.log(email);
+const existUser = asyncHandler(async(req,res) => {
+  const {email} = req.body
+  console.log(email)
   try {
     const userExist = await userExists(email);
-    console.log(userExist);
-    if (userExist) {
+    console.log(userExist)
+    if(userExist){
       res.status(201).json({
-        status: true,
+        status: true
       });
-    } else {
+    }else{
       res.status(201).json({
-        status: false,
+        status: false
       });
     }
+    
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
+})
 
 // @desc    Auth user/set token
 // route    POST /api/users/login
@@ -45,30 +46,16 @@ const authUser = asyncHandler(async (req, res) => {
   try {
     const user = await loginUser(email, password);
 
-    if (user === "Password was Incorect") {
-      res.status(400).json({ error: "Password was Incorect" });
+    if (user === "Password was Incoorect") {
+      res.status(400).json({ error: "Password was Incoorect" });
     } else if (user === "Email does not exist") {
       res.status(400).json({ error: "Email does not exist" });
     } else {
-      console.log(user);
-      if (user.type === 0) {
-        generateToken(res, user.company_id);
-        res.status(201).json({
-          id: user.company_id,
-          name: user.company_name,
-          type : user.type
-        });
-      } else {
-        generateToken(res, user.no);
-        res.status(201).json({
-          employee_id: user.no,
-          name: `${user.f_name} ${user.l_name}`,
-          type: user.type,
-          company_id: user.company_id,
-          role_name: user.role_name,
-          photo: user.photo_path,
-        });
-      }
+      generateToken(res, user.company_id);
+      res.status(201).json({
+        id: user.company_id,
+        name: user.company_name,
+      });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -112,7 +99,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     password,
     company_id,
-    type
+    type,
   );
 
   if (user) {

@@ -193,26 +193,4 @@ const getSiteDetail = asyncHandler(async (siteId) => {
   }
 });
 
-
-const allManagers = asyncHandler(async (companyID) => {
-  try {
-    // const managersGetQuery = "SELECT * FROM employee WHERE type = 4 AND company_id = $1";
-    const managersGetQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name, COUNT(sm.employee_id) AS site_manager_count FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id WHERE e.type = 4 AND e.company_id = $1 GROUP BY e.no";
-    const result = await query(managersGetQuery, [companyID]);
-    return result.rows;
-  } catch (err) {
-    throw new Error("Internal error");
-  }
-});
-
-const selectedManager = asyncHandler(async (employeeNo) => {
-  try {
-    const managerGetQuery = "SELECT COUNT(sm.site_id) AS assigned_sites_count, STRING_AGG(s.site_name, ', ') AS assigned_site_names FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id LEFT JOIN sites AS s ON sm.site_id = s.site_id WHERE e.no = $1 GROUP BY e.no, e.f_name";
-    const result = await query(managerGetQuery, [employeeNo]);
-    return result.rows;
-  } catch (err) {
-    throw new Error("Internal error");
-  }
-});
-
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager, getSiteDetail };
+export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, getSiteDetail };

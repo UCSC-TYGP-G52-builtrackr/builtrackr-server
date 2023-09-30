@@ -207,49 +207,48 @@ const addLaboures = async (
   }
 };
 
-// const authEmployee = async (email, password) => {
-//   const employeeDetailsQuery =
-//     "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
-//   try {
-//     const employeeDetails = await query(employeeDetailsQuery, [email]);
-    
-//     if (employeeDetails.rowCount > 0) {
-//       const employee = employeeDetails.rows[0];
-//       const matchPassword = await bcrypt.compare(password, employee.password);
+const authEmployee = async (email, password) => {
+  const employeeDetailsQuery =
+    "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
+  try {
+    const employeeDetails = await query(employeeDetailsQuery, [email]);
+    if (employeeDetails.rowCount > 0) {
+      const employee = employeeDetails.rows[0];
+      const matchPassword = await bcrypt.compare(password, employee.password);
 
-//       if (matchPassword) {
-//         return employee;
-//       } else {
-//         return "Password was Incoorect";
-//       }
-//     } else {
-//       const employeeDetailsQuery2 =
-//         "SELECT *,'HR Manager' AS role_name FROM employee  WHERE email = $1";
-//       try {
-//         console.log("2");
-//         const employeeDetails2 = await query(employeeDetailsQuery2, [email]);
-//         if (employeeDetails2.rowCount > 0) {
-//           const employee2 = employeeDetails2.rows[0];
-//           const matchPassword2 = await bcrypt.compare(
-//             password,
-//             employee2.password
-//           );
-//           if (matchPassword2) {
-//             return employee2;
-//           } else {
-//             return "Password was Incoorect";
-//           }
-//         } else {
-//           return "Email does not exist";
-//         }
-//       } catch (err) {
-//         throw new Error("Internal Error");
-//       }
-//     }
-//   } catch (err) {
-//     throw new Error("Internal Error");
-//   }
-// };
+      if (matchPassword) {
+        return employee;
+      } else {
+        return "Password was Incoorect";
+      }
+    } else {
+      const employeeDetailsQuery2 =
+        "SELECT *,'HR Manager' AS role_name FROM employee  WHERE email = $1";
+      try {
+        console.log("2");
+        const employeeDetails2 = await query(employeeDetailsQuery2, [email]);
+        if (employeeDetails2.rowCount > 0) {
+          const employee2 = employeeDetails2.rows[0];
+          const matchPassword2 = await bcrypt.compare(
+            password,
+            employee2.password
+          );
+          if (matchPassword2) {
+            return employee2;
+          } else {
+            return "Password was Incoorect";
+          }
+        } else {
+          return "Email does not exist";
+        }
+      } catch (err) {
+        throw new Error("Internal Error");
+      }
+    }
+  } catch (err) {
+    throw new Error("Internal Error");
+  }
+};
 
 const getEmployeesByType = async (id, type) => {
   const employeeDetailsQuery =
@@ -331,6 +330,7 @@ const getEmployeesCount = async (id) => {
 
 export {
   addEmployee,
+  authEmployee,
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,

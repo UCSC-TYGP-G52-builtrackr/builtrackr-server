@@ -3,6 +3,7 @@ import { transporter } from "../utils/mailer.js";
 
 import {
   addEmployee,
+  authEmployee,
   getEmployeesByType,
   getAllEmployeesDetails,
   employeeExists,
@@ -208,30 +209,30 @@ const addLabourer = asyncHandler(async (req, res) => {
   }
 });
 
-// const loginEmployee = asyncHandler(async (req, res) => {
-//   const { email, password } = req.body;
+const loginEmployee = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
 
-//   try {
-//     const employee = await authEmployee(email, password);
+  try {
+    const employee = await authEmployee(email, password);
 
-//     if (employee === "Password was Incoorect") {
-//       res.status(400).json({ error: "Password was Incoorect" });
-//     } else if (employee === "Email does not exist") {
-//       res.status(400).json({ error: "Email does not exist" });
-//     } else {
-//       generateToken(res, employee.no);
-//       res.status(201).json({
-//         employee_id: employee.no,
-//         name: `${employee.f_name} ${employee.l_name}`,
-//         type: employee.type,
-//         company_id: employee.company_id,
-//         role_name: employee.role_name,
-//       });
-//     }
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// });
+    if (employee === "Password was Incoorect") {
+      res.status(400).json({ error: "Password was Incoorect" });
+    } else if (employee === "Email does not exist") {
+      res.status(400).json({ error: "Email does not exist" });
+    } else {
+      generateToken(res, employee.no);
+      res.status(201).json({
+        employee_id: employee.no,
+        name: `${employee.f_name} ${employee.l_name}`,
+        type: employee.type,
+        company_id: employee.company_id,
+        role_name: employee.role_name,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 const test = asyncHandler(async (req, res) => {
   generateToken(res, 10);
   res.status(201).json({
@@ -297,6 +298,7 @@ const getAllemployeesCount = asyncHandler(async (req, res) => {
 
 export {
   registerEmployee,
+  loginEmployee,
   test,
   getEmployees,
   getAllEmployees,

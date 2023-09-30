@@ -3,6 +3,7 @@ import { transporter } from "../utils/mailer.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { upload } from "../utils/multer.js";
 import {
+  loginEmployee,
   registerEmployee,
   test,
   getEmployees,
@@ -18,6 +19,7 @@ import {
 } from "../controllers/employeeController.js";
 
 employeeRouter.post("/registerEmployee", registerEmployee);
+employeeRouter.post("/loginEmployee", loginEmployee);
 employeeRouter.post("/getEmployees", getEmployees);
 employeeRouter.post("/getAllEmployees", getAllEmployees);
 employeeRouter.post("/employeeExists", existEmployee);

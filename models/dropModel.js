@@ -6,7 +6,7 @@ import { query } from "../config/db.js";
         const viewDropQuery  =  "SELECT * FROM employee";
         const queryResult  = await query(viewDropQuery)
         return queryResult.rows
-
+        
     }catch (error){
         console.error(`Error viewing task: ${error.message}`)
         throw new Error(error.message)
@@ -14,6 +14,3 @@ import { query } from "../config/db.js";
 }
 
 
-
-
-export default {dropDown}
