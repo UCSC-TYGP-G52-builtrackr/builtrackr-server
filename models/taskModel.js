@@ -44,9 +44,7 @@ const TaskOfSupervisor = async (employeeId) => {
     const result = await query(taskQuery, [employeeId]);
     if (result.rowCount > 0) {
       return result.rows;
-    } else {
-      return "Not Data";
-    }
+    } 
   } catch (error) {
     throw new Error("INternal error");
   }

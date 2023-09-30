@@ -2,7 +2,7 @@ import { router as uploadRouter } from "./index.js";
 import path from "path";
 import fs from "fs";
 
-import { upload, upload1 } from "../utils/multer.js";
+import { upload, upload1,upload3 } from "../utils/multer.js";
 import { log } from "console";
 
 const __dirname = path.resolve();
@@ -26,6 +26,23 @@ uploadRouter.post("", upload.single("document"), (req, res) => {
 
 uploadRouter.post("/employee", (req, res) => {
   upload1.single("image")(req, res, (err) => {
+    if (err) {
+      // Handle the upload error
+      console.error("Multer Error:", err);
+      return res
+        .status(500)
+        .json({ error: "File upload failed", message: err.message });
+    }
+
+    // File upload was successful, continue with your logic here
+    console.log("Request received");
+    res.status(200).json(req.file.filename);
+  });
+});
+
+uploadRouter.post("/task", (req, res) => {
+  upload3.single("image")(req, res, (err) => {
+    console.log('server')
     if (err) {
       // Handle the upload error
       console.error("Multer Error:", err);
