@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken'
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -15,7 +15,7 @@ const generateToken = (res, userId) => {
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
-  console.log("Doneeeee");
+  
 };
 
 export default generateToken;
