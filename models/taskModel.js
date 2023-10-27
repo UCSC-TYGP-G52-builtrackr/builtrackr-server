@@ -39,15 +39,27 @@ const deleteTask = async (id) => {
   }
 };
 const TaskOfSupervisor = async (employeeId) => {
-  const taskQuery = "SELECT * FROM activity WHERE employee_id = $1";
+  const taskQuery = "SELECT * FROM activity WHERE employee_id = $1 AND status = '0'";
   try {
     const result = await query(taskQuery, [employeeId]);
     if (result.rowCount > 0) {
       return result.rows;
     } 
   } catch (error) {
-    throw new Error("INternal error");
+    throw new Error("Internal error");
   }
 };
 
-export { addTask, getAllTasks, deleteTask, TaskOfSupervisor };
+const TaskOfSupervisorProof = async (taskId,imageName,comment) => {
+  const taskQuery = "Update activity SET image=$1, comment=$2, status='1' WHERE id=$3";
+  try {
+    const result = await query(taskQuery, [imageName,comment,taskId]);
+    if (result.rowCount > 0) {
+      return result.rowCount;
+    } 
+  } catch (error) {
+    throw new Error("Internal error");
+  }
+};
+
+export { addTask, getAllTasks, deleteTask, TaskOfSupervisor, TaskOfSupervisorProof };

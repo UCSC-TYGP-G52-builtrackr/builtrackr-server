@@ -1,4 +1,4 @@
-import { addTask, getAllTasks, deleteTask,TaskOfSupervisor } from "../models/taskModel.js";
+import { addTask, getAllTasks, deleteTask,TaskOfSupervisor, TaskOfSupervisorProof } from "../models/taskModel.js";
 import asyncHandler from "express-async-handler";
 
 const AddTask = asyncHandler(async (req, res) => {
@@ -55,4 +55,20 @@ const SupervisorTask = asyncHandler(async (req, res) => {
   }
 });
 
-export { AddTask, ViewTask, DeleteTask, SupervisorTask };
+const SupervisorTaskProof = asyncHandler(async (req, res) => {
+  const {taskId,imageName,comment} = req.body;
+  try {
+    const result = await TaskOfSupervisorProof(taskId,imageName,comment);//model name shouldn't equal to controller name
+    if(result !== "Not Data"){
+        res.status(200).json(result)
+    }else{
+        res.status(200).json("No Data")
+    }
+    console.log(result)
+  } catch (err) {
+    res.status(500).json(err)
+    console.log(err)
+  }
+});
+
+export { AddTask, ViewTask, DeleteTask, SupervisorTask, SupervisorTaskProof };

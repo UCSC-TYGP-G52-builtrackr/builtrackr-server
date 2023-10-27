@@ -40,9 +40,8 @@ uploadRouter.post("/employee", (req, res) => {
   });
 });
 
-uploadRouter.post("/task", (req, res) => {
+uploadRouter.post("/task",(req, res) => {
   upload3.single("image")(req, res, (err) => {
-    console.log('server')
     if (err) {
       // Handle the upload error
       console.error("Multer Error:", err);
@@ -52,7 +51,6 @@ uploadRouter.post("/task", (req, res) => {
     }
 
     // File upload was successful, continue with your logic here
-    console.log("Request received");
     res.status(200).json(req.file.filename);
   });
 });
@@ -80,6 +78,7 @@ uploadRouter.get("/getpdfs", (req, res) => {
 
 uploadRouter.post("/downloadpdfs", (req, res) => {
   // get all the files inside upload folder
+  console.log(req.body)
   const { filename } = req.body;
   const filePath = path.join(__dirname, "/uploads", filename);
   res.download(filePath);
