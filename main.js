@@ -25,7 +25,7 @@ import { imageUploadRouter } from './api/imageUpload.js';
 import {imageRouter} from './api/image.js';
 import {labourLeaveRouter} from './api/labourleave.js'
 import Stripe from 'stripe';
-// import { laborRouter } from './api/labor.js';
+import { laborRouter } from './api/labor.js';
 
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY,{
     apiVersion: "2022-08-01"
