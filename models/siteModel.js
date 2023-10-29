@@ -130,7 +130,7 @@ const checkCustDetails = asyncHandler(async (email, password) => {
 
 const customerAllSites = asyncHandler(async (customerID) => {
   try {
-    const siteQuery = "SELECT * FROM sites WHERE site_client = $1";
+    const siteQuery = "SELECT * FROM sites WHERE client_id = $1";
     const result = await query(siteQuery, [customerID]);
     return result.rows;
   } catch (err) {
