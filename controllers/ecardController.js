@@ -60,15 +60,15 @@ export const getAllEquipments = async (req, res) => {
 // Define the addMaterial function
 export const addEquipment = async (req, res) => {
   try {
-    const { item_name, description, quantity, photo_path } = req.body;
+    const { equipment_name, description, quantity, photo_path } = req.body;
 
     const sql = `
-      INSERT INTO equipment (item_name, description, quantity, photo_path)
+      INSERT INTO equipment (equipment_name, description, quantity, photo_path)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
 
-    const values = [item_name, description, quantity, photo_path];
+    const values = [equipment_name, description, quantity, photo_path];
 
     const result = await query(sql, values);
 
@@ -125,12 +125,12 @@ export const deleteEquipment = async (req, res) => {
 
 export const updateEquipment = async (req, res) => {
     try {
-      const { equipment_id, item_name, description, quantity, photo_path } = req.body;
+      const { equipment_id, equipment_name, description, quantity, photo_path } = req.body;
   
       const sql = `
         UPDATE equipment
         SET
-          item_name = $1,
+        equipment_name = $1,
           description = $2,
           quantity = $3,
           photo_path = $4
@@ -138,7 +138,7 @@ export const updateEquipment = async (req, res) => {
           equipment_id = $5
       `;
   
-      const values = [item_name, description, quantity, photo_path, equipment_id];
+      const values = [equipment_name, description, quantity, photo_path, equipment_id];
   
       const result = await query(sql, values);
   

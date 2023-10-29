@@ -30,7 +30,7 @@ import { laborRouter } from './api/labor.js';
   const stripe = Stripe(process.env.STRIPE_SECRET_KEY,{
     apiVersion: "2022-08-01"
   })
-
+import { iManagerERRouter } from './api/eRequest.js';
 import { iManagerRouter } from './api/mCard.js';
 import { iManagerERouter } from './api/eCard.js';
 import { iManagerMRRouter } from './api/mRequest.js';
@@ -125,7 +125,7 @@ app.get("/config", (req, res) => {
 app.use('/api/material', iManagerRouter )
 app.use('/api/equipment', iManagerERouter)
 app.use('/api/mrequest', iManagerMRRouter)
-
+app.use('/api/erequest', iManagerERRouter)
 
 
 

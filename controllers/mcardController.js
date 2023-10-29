@@ -17,15 +17,15 @@ export const getAllMaterials = async (req, res) => {
 // Define the addMaterial function
 export const addMaterial = async (req, res) => {
   try {
-    const { item_name, description, quantity, photo_path } = req.body;
+    const {material_name, description, quantity, type, preorder_level } = req.body;
 
     const sql = `
-      INSERT INTO material (item_name, description, quantity, photo_path)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO material (material_name, description, quantity, type, preorder_level)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
 
-    const values = [item_name, description, quantity, photo_path];
+    const values = [material_name, description, quantity, type, preorder_level];
 
     const result = await query(sql, values);
 
@@ -66,36 +66,24 @@ export const deleteMaterial = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const updateMaterial = async (req, res) => {
     try {
-      const { material_id, item_name, description, quantity, photo_path } = req.body;
+      const { material_id, material_name, description, quantity, type, preorder_level } = req.body;
   
       const sql = `
         UPDATE material
         SET
-          item_name = $1,
+          material_name = $1,
           description = $2,
           quantity = $3,
-          photo_path = $4
+          type = $4,
+          preorder_level = $5
+
         WHERE
-          material_id = $5
+          material_id = $6
       `;
   
-      const values = [item_name, description, quantity, photo_path, material_id];
+      const values = [material_name, description, quantity, type, preorder_level, material_id];
   
       const result = await query(sql, values);
   
