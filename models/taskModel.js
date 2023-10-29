@@ -38,49 +38,28 @@ const deleteTask = async (id) => {
     throw new Error(error.message);
   }
 };
-
-const taskCount = async () => {
+const TaskOfSupervisor = async (employeeId) => {
+  const taskQuery = "SELECT * FROM activity WHERE employee_id = $1 AND status = '0'";
   try {
-    const countTaskQuery = "SELECT COUNT(*) as count FROM tasks";
-    const queryResult = await query(countTaskQuery);
-    return queryResult.rows[0];
+    const result = await query(taskQuery, [employeeId]);
+    if (result.rowCount > 0) {
+      return result.rows;
+    } 
   } catch (error) {
-    console.error(`Error counting task: ${error.message}`);
-    throw new Error(error.message);
+    throw new Error("Internal error");
   }
 };
 
-const taskCompletion = async () => {
+const TaskOfSupervisorProof = async (taskId,imageName,comment) => {
+  const taskQuery = "Update activity SET image=$1, comment=$2, status='1' WHERE id=$3";
   try {
-    const taskCompletionQuery =
-      "SELECT COUNT(*) as count FROM tasks WHERE status =true";
-    const queryResult = await query(taskCompletionQuery);
-    return queryResult.rows[0] ?? { count: 0 };
+    const result = await query(taskQuery, [imageName,comment,taskId]);
+    if (result.rowCount > 0) {
+      return result.rowCount;
+    } 
   } catch (error) {
-    console.error(`Error counting task: ${error.message}`);
-    throw new Error(error.message);
+    throw new Error("Internal error");
   }
 };
 
-const rejectTask = async () => {
-  const num = 0;
-
-  try {
-    const rejectTaskQuery = 'SELECT * FROM tasks WHERE "cStatus"=$1';
-    const queryResult = await query(rejectTaskQuery, [num]);
-    // return queryResult.rows[0] ?? {count:0}
-    return queryResult.rows;
-  } catch (error) {
-    console.error(`Error counting task: ${error.message}`);
-    throw new Error(error.message);
-  }
-};
-
-export {
-  addTask,
-  getAllTasks,
-  deleteTask,
-  taskCompletion,
-  taskCount,
-  rejectTask,
-};
+export { addTask, getAllTasks, deleteTask, TaskOfSupervisor, TaskOfSupervisorProof };
