@@ -143,9 +143,11 @@ const getIds = async (empID) => {
 
 const getSupervisor = async (siteId) => {
   try {
-    const viewSupervisorQuery = "SELECT employee.* FROM employee INNER JOIN sites ON sites.supervisorid=employee.no where sites.site_id=$1)";
+    console.log(siteId);
+    const viewSupervisorQuery = "SELECT employee.* FROM employee INNER JOIN sites ON sites.supervisorid=employee.no where sites.site_id=$1";
     const queryResult = await query(viewSupervisorQuery,[siteId]);
-    return queryResult.rows;
+    console.log(queryResult.rows);
+    return queryResult.rows[0];
   } catch (error) {
     console.error(`Error viewing supervisor: ${error.message}`);
     throw new Error(error.message);
