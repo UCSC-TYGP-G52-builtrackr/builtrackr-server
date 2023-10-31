@@ -5,7 +5,7 @@ import {query} from '../config/db.js'
 const viewEquipments = async () => {
     const availableValue = 1;
     try {
-        const viewEmployeeQuery = 'SELECT * from "Equipments" WHERE available = $1';
+        const viewEmployeeQuery = 'SELECT * from "Equipments" WHERE available = $1';1
         const queryResult = await query(viewEmployeeQuery, [availableValue]);
         return queryResult.rows;
     } catch (error) {

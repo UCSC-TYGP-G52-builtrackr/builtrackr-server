@@ -13,6 +13,8 @@ import {
   getEmployeesCount,
   addLaboures,
   getAllLabourers,
+  allLabourerTypes,
+  addLabourerType
 } from "../models/employeeModel.js";
 import generateToken from "../utils/generateTokens.js";
 
@@ -37,7 +39,7 @@ const existEmployee = asyncHandler(async (req, res) => {
 });
 const existEmployeeByType = asyncHandler(async (req, res) => {
   const { company_id, type } = req.body;
-  
+
   try {
     const employeeExistType = await employeeExistByType(type, company_id);
     if (employeeExistType) {
@@ -181,6 +183,7 @@ const addLabourer = asyncHandler(async (req, res) => {
     address,
     company_id,
     imageName,
+    labourerType,
   } = req.body;
 
   console.log(req.body);
@@ -197,7 +200,8 @@ const addLabourer = asyncHandler(async (req, res) => {
       registerDate,
       address,
       company_id,
-      imageName
+      imageName,
+      labourerType
     );
 
     res.status(200).json({
@@ -283,6 +287,7 @@ const getAllEmployees = asyncHandler(async (req, res) => {
 });
 const getAllemployeesCount = asyncHandler(async (req, res) => {
   const { id } = req.body;
+  console.log(id);
   try {
     const employees = await getEmployeesCount(id);
     if (employees) {
@@ -290,6 +295,27 @@ const getAllemployeesCount = asyncHandler(async (req, res) => {
     } else {
       res.status(401).json({ message: "No employee records" });
     }
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const getLabourerTypes = asyncHandler(async (req, res) => {
+  const { company_id } = req.body;
+  console.log(company_id);
+  try {
+    const labourerTypes = await allLabourerTypes(company_id);
+    res.status(200).json(labourerTypes);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const addLabourerTypes = asyncHandler(async (req, res) => {
+  const { company_id,name } = req.body;
+  try {
+    const labourerTypes = await addLabourerType(company_id,name);
+    res.status(200).json(labourerTypes);
   } catch (err) {
     throw new Error(err);
   }
@@ -308,4 +334,6 @@ export {
   addLabourer,
   getAllemployeesCount,
   getLabourers,
+  getLabourerTypes,
+  addLabourerTypes,
 };

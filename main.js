@@ -85,10 +85,13 @@ app.get("/config", (req, res) => {
 });
 
 app.post("/create-payment-intent", async (req, res) => {
+  console.log(req.body);
+  const {amount} = req.body;
+  console.log(amount);
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       currency: "EUR",
-      amount: 1999,
+      amount: amount,
       automatic_payment_methods: { enabled: true },
     });
 
@@ -126,10 +129,9 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (employeeNo) => {
-  
   console.log(employeeNo);
   console.log(onlineUsers);
-  console.log(onlineUsers.find((user) => user.employeeNo == employeeNo))
+  console.log(onlineUsers.find((user) => user.employeeNo == employeeNo));
   return onlineUsers.find((user) => user.employeeNo == employeeNo);
 };
 
@@ -159,7 +161,7 @@ io.on("connection", (socket) => {
 });
 
 const port = process.env.PORT;
-server.listen(port, () => {
+server.listen(port,() => {
   console.log(`Server listening at http://localhost:${port}`);
 });
 

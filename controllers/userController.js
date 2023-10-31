@@ -11,6 +11,9 @@ import {
   allPrivileges,
   addeUserRole,
   rolePrivileges,
+  checkEmailType,
+  resetUserPassword,
+  siteAddons,
 } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
@@ -56,7 +59,7 @@ const authUser = asyncHandler(async (req, res) => {
         res.status(201).json({
           id: user.company_id,
           name: user.company_name,
-          type : user.type
+          type: user.type,
         });
       } else {
         generateToken(res, user.no);
@@ -90,7 +93,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     password,
     company_id,
-    type,
+    plan,
   } = req.body;
   console.log(req.body);
 
@@ -112,7 +115,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username,
     password,
     company_id,
-    type
+    plan
   );
 
   if (user) {
@@ -204,6 +207,36 @@ const getRolePrivileges = asyncHandler(async (req, res) => {
   res.status(200).json(result);
 });
 
+const emailType = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await checkEmailType(email);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500);
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, password, type } = req.body;
+  try {
+    const result = await resetUserPassword(email, password, type);
+    res.status(200).json("OK")
+  } catch (err) {
+    res.status(500).json(err)
+  }
+});
+
+const siteAddon = asyncHandler(async(req,res) => {
+  const {company_id,amount} = req.body;
+  try {
+    const result = await siteAddons(company_id,amount)
+    res.status(200).json("OK")
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})
+
 export {
   existUser,
   authUser,
@@ -215,4 +248,7 @@ export {
   getPrivileges,
   createUserRole,
   getRolePrivileges,
+  emailType,
+  resetPassword,
+  siteAddon
 };
