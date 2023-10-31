@@ -40,10 +40,11 @@ const addCustomer = async (
   email,
   contNo,
   confpwd,
+  companyID,
 ) => {
   
   const addCustomerQuery =
-    "INSERT INTO customer ( cust_fname, cust_lname, cust_email, cust_tel, cust_pwd ) VALUES ($1, $2, $3, $4, $5)";
+    "INSERT INTO customer ( cust_fname, cust_lname, cust_email, cust_tel, cust_pwd, comp_id ) VALUES ($1, $2, $3, $4, $5, $6)";
 
   try {
     const createCustomer = await query(addCustomerQuery, [
@@ -52,6 +53,7 @@ const addCustomer = async (
       email,
       contNo,
       confpwd,
+      companyID,
     ]);
 
     if (createCustomer.rowCount > 0) {
@@ -76,7 +78,9 @@ const siteDisplay = asyncHandler(async (companyID) => {
 
 const singleSiteDisplay = asyncHandler(async (id) => {
   try {
-    const singleSiteQuery = "SELECT * FROM sites WHERE site_id = $1";
+    // const singleSiteQuery = "SELECT * FROM sites WHERE site_id = $1";
+    // const singleSiteQuery = "SELECT s.*,(SELECT COUNT(*) FROM tasks t  WHERE s.site_id = t.siteid) AS task_count, (SELECT COUNT(*) FROM tasks t WHERE s.site_id = t.siteid AND t.status = 1) AS task_completed_count, CASE WHEN s.site_id = $1 THEN (SELECT c.image FROM activity c WHERE c.id = s.site_id) ELSE NULL END AS img_path FROM sites s WHERE s.site_id = $1";
+    const singleSiteQuery = 'SELECT s.*,(SELECT COUNT(*) FROM tasks t  WHERE s.site_id = t.siteid) AS task_count, (SELECT COUNT(*) FROM tasks t WHERE s.site_id = t.siteid AND t.status = 1) AS task_completed_count FROM sites s WHERE s.site_id = $1';
     const result = await query(singleSiteQuery, [id]);
     return result.rows;
   } catch (err) {
@@ -84,10 +88,22 @@ const singleSiteDisplay = asyncHandler(async (id) => {
   }
 });
 
-const fetchAllCustomers = asyncHandler(async () => {
+const siteImagePath = asyncHandler(async (id) => {
+  try {
+    // const singleSiteQuery = "SELECT * FROM sites WHERE site_id = $1";
+    // const siteImageQuery = "SELECT image FROM Card WHERE siteId = $1";
+    const siteImageQuery = 'SELECT title, image, "taskId" FROM "Card" WHERE "siteId" = $1';
+    const result = await query(siteImageQuery, [id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+const fetchAllCustomers = asyncHandler(async (companyID) => {
   try {
     const custFetchQuery = "SELECT cust_id, CONCAT(cust_fname, ' ', cust_lname) AS cust_name FROM Customer";
-    const result = await query(custFetchQuery);
+    const result = await query(custFetchQuery, [companyID]);
     return result.rows;
   } catch (err) {
     throw new Error("Internal error");
@@ -202,4 +218,4 @@ const selectedManager = asyncHandler(async (employeeNo) => {
   }
 });
 
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager };
+export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager, siteImagePath };

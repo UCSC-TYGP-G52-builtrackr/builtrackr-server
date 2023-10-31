@@ -23,15 +23,15 @@ const storage = diskStorage({
     }
   });
 
-  const storage3 = diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/taskproof/'); // Specify the destination directory for uploaded files
-    },
-    filename: function (req, file, cb) {
-      cb(null, Date.now() + '-' + file.originalname); 
-      // Customize the file name if needed
-    }
-  });  
+  // const storage3 = diskStorage({
+  //   destination: function (req, file, cb) {
+  //     cb(null, 'uploads/taskproof/'); // Specify the destination directory for uploaded files
+  //   },
+  //   filename: function (req, file, cb) {
+  //     cb(null, Date.now() + '-' + file.originalname); 
+  //     // Customize the file name if needed
+  //   }
+  // });  
 
   const storage3 = diskStorage({
     destination: function (req, file, cb) {
@@ -48,7 +48,7 @@ const upload1 = multer({ storage: storage1 });
 const upload3 = multer({ storage: storage3 });
 
 
-const uploadDir2 = 'uploads/Supervisor/uploads';
+const uploadDir2 = 'uploads/Supervisor/';
 
 const storage2 = diskStorage({
     destination: function (file,req, cb) {
