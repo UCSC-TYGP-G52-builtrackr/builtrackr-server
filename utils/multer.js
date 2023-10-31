@@ -2,7 +2,7 @@
 import multer, {diskStorage} from 'multer';
 import path from 'path';
 
-const uploadDir = 'uploads';
+const uploadDir = 'uploads/';
 
 const storage = diskStorage({
     destination: function (req, file, cb) {
@@ -44,5 +44,20 @@ const storage2 = diskStorage({
 const upload2 = multer({ storage: storage2 });
 
 
+const uploadDir3 = 'uploads/Documents/';
 
-export { upload ,upload1, upload2 }
+const storage3 = diskStorage({
+  destination: function (file,req, cb) {
+
+    const uploadPath = path.join(uploadDir3);
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+
+const upload3 = multer({ storage: storage3 });
+
+export { upload ,upload1, upload2 , upload3}

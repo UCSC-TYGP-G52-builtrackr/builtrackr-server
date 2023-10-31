@@ -2,7 +2,7 @@ import { router as fileuploadRouter } from "./index.js";
 import path from 'path';
 import fs from 'fs';
 
-import { upload } from "../utils/multer.js";
+import { upload3 } from "../utils/multer.js";
 import { log } from "console";
 
 //upload file from frontend
@@ -10,7 +10,7 @@ const __dirname = path.resolve();
 
 
 
-fileuploadRouter.post('', upload.single('document'), (req, res) => {
+fileuploadRouter.post('/uploads3', upload3.single('document'), (req, res) => {
     res.send("Image Uploaded");
 });
 
@@ -18,9 +18,9 @@ fileuploadRouter.post('', upload.single('document'), (req, res) => {
 
 
 // this is the code for get documents from document folder
-fileuploadRouter.get('/getpdfs', (req, res) => {
+fileuploadRouter.get('/uploads/Documents', (req, res) => {
     // get all the files inside upload folder
-    const directoryPath = path.join(__dirname, '/uploads');
+    const directoryPath = path.join(__dirname, '/uploads/Documents/');
     console.log(directoryPath);
     fs.readdir(directoryPath, function (err, files) {
         if (err) {
@@ -40,16 +40,32 @@ fileuploadRouter.get('/getpdfs', (req, res) => {
     );
 });
 
-fileuploadRouter.post('/downloadpdfs', (req, res) => {
-    // get all the files inside upload folder
-    const {filename} = req.body;
-    const filePath = path.join(__dirname, '/uploads', filename);
-    res.download(filePath);
-});
+const pdfDirectory = path.join(__dirname, 'uploads/Documents');
 
-fileuploadRouter.delete('/deletepdf/:filename', async (req, res) => {
+fileuploadRouter.post('/uploads/Documents', (req, res) => {
+    const { filename } = req.body;
+    console.log(req.body.filename)
+  
+    // Construct the file path
+    const filePath = path.join(pdfDirectory, filename);
+  
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Set the appropriate content type for PDF files
+      res.setHeader('Content-Type', 'application/pdf');
+  
+      // Stream the file to the response
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
+    } else {
+      // Return a 404 response if the file does not exist
+      res.status(404).send('File not found');
+    }
+  });
+
+fileuploadRouter.delete('/uploads/Documents/:filename', async (req, res) => {
     const { filename } = req.params;
-    const filePath = path.join(__dirname, '/uploads', filename);
+    const filePath = path.join(__dirname, '/uploads/Documents', filename);
   
     try {
       fs.unlinkSync(filePath);
