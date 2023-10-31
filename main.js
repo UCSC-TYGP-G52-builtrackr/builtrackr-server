@@ -29,6 +29,7 @@ import { laborRouter } from "./api/labor.js";
 import { iManagerRouter } from "./api/mCard.js";
 import { iManagerERouter } from "./api/eCard.js";
 import { iManagerMRRouter } from "./api/mRequest.js";
+import { iManagerERRouter } from './api/eRequest.js';
 import { paymentRouter } from "./api/payment.js";
 dotenv.config();
 connectDB();
@@ -108,9 +109,16 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 //sadun
-app.use("/api/material", iManagerRouter);
-app.use("/api/equipment", iManagerERouter);
-app.use("/api/mrequest", iManagerMRRouter);
+app.use('/api/material', iManagerRouter )
+app.use('/api/equipment', iManagerERouter)
+app.use('/api/mrequest', iManagerMRRouter)
+app.use('/api/erequest', iManagerERRouter)
+
+
+
+
+
+
 
 //rumindu
 
