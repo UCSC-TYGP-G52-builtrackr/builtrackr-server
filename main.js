@@ -26,17 +26,16 @@ import { imageRouter } from "./api/image.js";
 import { labourLeaveRouter } from "./api/labourleave.js";
 import Stripe from "stripe";
 import { laborRouter } from "./api/labor.js";
-
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2022-08-01",
-});
-
 import { iManagerRouter } from "./api/mCard.js";
 import { iManagerERouter } from "./api/eCard.js";
 import { iManagerMRRouter } from "./api/mRequest.js";
 import { paymentRouter } from "./api/payment.js";
 dotenv.config();
 connectDB();
+
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2022-08-01",
+});
 
 const server = http.createServer(app);
 const io = new WebSocketServer(server, {

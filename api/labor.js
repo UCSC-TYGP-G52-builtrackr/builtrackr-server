@@ -1,6 +1,7 @@
 import {router as laborRouter} from './index.js'
-import {GetData} from '../controllers/laborController.js'
+import {GetLaborData} from '../controllers/laborController.js'
 
-laborRouter.get('/data',GetData)
+laborRouter.get('/data/:siteId',GetLaborData)
+
 
 export {laborRouter}
