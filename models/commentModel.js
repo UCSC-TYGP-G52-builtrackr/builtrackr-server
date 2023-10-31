@@ -4,8 +4,10 @@ import { query } from "../config/db.js";
 //insert comment
 export const insertComment = async (comment) => {
     const {content ,cardId,date,companyID,userId } = comment;
+    console.log("comment", comment);
     const result = await query(
-        `INSERT INTO comment (content,"cardId",date,"companyID","userId") VALUES ('${content}','${cardId}','${date}','${companyID}','${userId}') RETURNING *`
+        `INSERT INTO comment (content,"cardId",date,"companyID","userId") VALUES ($1,$2,$3,$4,$5) RETURNING *`,
+        [content ,cardId,date,companyID,userId]
     );
     //insert query in express js
 

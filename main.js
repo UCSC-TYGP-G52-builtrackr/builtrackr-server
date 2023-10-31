@@ -15,6 +15,7 @@ import { navbarRouter } from './api/navbar.js';
 import { warehouseCERouter } from './api/warehouseCE.js';
 import {requestRouter} from './api/requests.js';
 import{labourRouter} from './api/labour.js';
+import { laborRouter } from "./api/labor.js";
 import { equipmentRouter } from './api/equipment.js';
 import { leaveRouter } from './api/leave.js';
 import {fileuploadRouter} from './api/fileupload.js';
