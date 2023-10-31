@@ -82,9 +82,9 @@ export const updateCardInfoDescription = async (description) => {
 
 export const updateCardInfoTitle = async (titles) => {
     const {title,cardId} = titles;
-    console.log("card values",titles);
+    console.log("card values tile update",titles);
     const result = await query(
-        'UPDATE "Card" SET title = $1 WHERE id =$2  RETURNING description',
+        'UPDATE "Card" SET title = $1 WHERE id =$2  RETURNING title',
     [title,cardId]
     );
     return result;
@@ -101,6 +101,19 @@ export const updateCardInfoDate = async (dates) => {
 }
 
 
+//delete label
+
+ export const removeLabel = async (id) => {
+     const labelId = id.id;
+        console.log("label values",labelId.id);
+        const result = await query(
+            'DELETE FROM "CardInfo" WHERE id = $1',
+        [labelId]
+        );
+        return result;
+    }
+
+
 export default { insertCardInfo,selectCardInfo,insertCardInfoTask,
     selectCardInfoTask,updateCardInfoTask,updateCardInfoDescription,
-     updateCardInfoTitle ,updateCardInfoDate};
+     updateCardInfoTitle ,updateCardInfoDate , removeLabel};

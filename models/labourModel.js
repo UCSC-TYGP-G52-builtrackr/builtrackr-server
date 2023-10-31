@@ -2,16 +2,22 @@ import {query} from '../config/db.js'
 
 
 
-const viewEmployee = async () => {
-    const availableValue = 1;
-    try {
-        const viewEmployeeQuery = 'SELECT * from Employee WHERE available = $1';
-        const queryResult = await query(viewEmployeeQuery, [availableValue]);
-        return queryResult.rows;
-    } catch (error) {
-        console.error(`Error viewing employee: ${error.message}`);
+export const  viewEmployee = async(siteId) =>{
+    const site = siteId;
+    try{
+        const viewDropQuery  =  "SELECT labourer.*, laborleave.approval  FROM labourer Left JOIN laborleave ON labourer.labourid = laborleave.labor_id WHERE labourer.site_id = $1 ";
+        const queryResult  = await query(viewDropQuery,[site])
+        return queryResult.rows
+
+    }catch (error){
+        console.error(`Error viewing task: ${error.message}`)
+        throw new Error(error.message)
     }
 }
+
+//SELECT labourer.*, laborleave.approval  FROM labourer Left JOIN laborleave ON labourer.labourid = laborleave.labor_id WHERE labourer.site_id = $1
+
+
 const getLeaves = async () => {
     try {
         const viewLeaveQuery = "SELECT * FROM laborleave";
@@ -33,16 +39,42 @@ const approveLeave = async (laborid, approval,currentDate) => {
     }
 }
 
+
+
 const updateEmployee = async (employeeId) => {
     const available = 0;
     try {
-        const updateEmployeeQuery = 'UPDATE "Employee" SET available = $1 WHERE id = $2';
+        const updateEmployeeQuery = 'UPDATE labourer SET site_id = $1 WHERE labourid = $2';
         const queryResult = await query(updateEmployeeQuery, [available, employeeId]);
         return queryResult.rows;
     } catch (error) {
         console.error(`Error updating employee: ${error.message}`);
     }
 }
+
+const updateRating = async (employeeId, rating) => {
+    console.log(employeeId, rating);
+    try {
+        const updateRatingQuery = 'UPDATE labourer SET rating = $1 WHERE labourid = $2';
+        const queryResult = await query(updateRatingQuery, [rating, employeeId]);
+        return queryResult.rows;
+    } catch (error) {
+        console.error(`Error updating rating: ${error.message}`);
+    }
+}
+
+const viewRating = async (siteId) => {
+    const siteid = siteId;
+    try {
+        const viewRatingQuery = 'SELECT labourid,rating FROM labourer Where site_id = $1';
+        const queryResult = await query(viewRatingQuery, [siteid]);
+        return queryResult.rows;
+    } catch (error) {
+        console.error(`Error viewing rating: ${error.message}`);
+    }
+}
+
+
 const declineLeave = async (laborid, approval) => {
     try {
         
@@ -114,5 +146,4 @@ const getLaborData = async (siteId) => {
 }
 
 
-
-export { getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount,viewEmployee , updateEmployee,getLaborData};
+export {viewRating, getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount, updateEmployee, updateRating};

@@ -1,10 +1,11 @@
 import { query } from "../config/db.js";
 
 
- export const  dropDown = async() =>{
+ export const  dropDown = async(siteId) =>{
+    const site = siteId;
     try{
-        const viewDropQuery  =  "SELECT * FROM employee";
-        const queryResult  = await query(viewDropQuery)
+        const viewDropQuery  =  "SELECT * FROM labourer WHERE site_id = $1 ";
+        const queryResult  = await query(viewDropQuery,[site])
         return queryResult.rows
 
     }catch (error){

@@ -1,14 +1,14 @@
 import { insertBoard,selectBoard, insertCard,selectCard, 
-    deleteCard, deleteBoard, cardCompleted, updateTaskcardId} from "../models/kanbanboardModel.js";
+    deleteCard, deleteBoard, cardCompleted, updateTaskcardId,selectSiteId} from "../models/kanbanboardModel.js";
 import asyncHandler from "express-async-handler";
 
 
 export const addBoard = asyncHandler(async (req, res) => {
-    const { title ,companyId, supervisorId } = req.body;
+    const { title ,companyId, SupervisorId,siteId } = req.body;
     console.log(req.body);
     try {
         const board = await insertBoard({
-           title ,companyId, supervisorId,
+           title ,companyId, SupervisorId,siteId
         });
         res.status(201).json({
             status: true,
@@ -22,8 +22,15 @@ export const addBoard = asyncHandler(async (req, res) => {
 
 
 export const getBoard = asyncHandler(async (req, res) => {
-    const board = await selectBoard()
-    res.status(200).json(board)    //tasks send to the front end
+    const siteid  = req.query.siteId;
+    console.log("siteId",req.query.siteId);
+    try {
+        const siteId = await  selectBoard(siteid)
+        res.status(200).json(siteId);
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }    //tasks send to the front end
 
 })
 
@@ -31,11 +38,11 @@ export const getBoard = asyncHandler(async (req, res) => {
 //insert card
 
 export const addCard = asyncHandler(async (req, res) => {
-    const { title, date, companyId, supervisorId, boardId} = req.body;
+    const { title, date, companyId, SupervisorId, boardId ,siteId} = req.body;
     console.log(req.body);
     try {
         const card = await insertCard({
-            title, date, companyId, supervisorId, boardId
+            title, date, companyId, SupervisorId, boardId, siteId
         });
         res.status(201).json({
             status: true,
@@ -49,8 +56,15 @@ export const addCard = asyncHandler(async (req, res) => {
 
 
 export const getCard = asyncHandler(async (req, res) => {
-    const board = await selectCard()
-    res.status(200).json(board)    //tasks send to the front end
+    const siteid  = req.query.siteId;
+    console.log("siteId",req.query.siteId);
+    try {
+        const siteId = await  selectCard(siteid)
+        res.status(200).json(siteId);
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }    
 
 })
 
@@ -127,10 +141,27 @@ export const updateTaskId = asyncHandler(async (req, res) => {
 
 });
 
+//get site id of employeeNo from the front end
+
+export const getSite = asyncHandler(async (req, res) => {
+    const employeeNo  = req.query.employeeNo;
+    console.log("employee",req.query.employeeNo);
+    try {
+        const siteId = await selectSiteId (
+            {employeeNo}
+
+        )
+        res.status(201).json(siteId);
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }
+
+});
 
 
 
 
 
 export default { addBoard,getBoard , addCard,getCard ,
-     deleteCardInfo , deleteBoardInfo, cardCompletedInfo , updateTaskId};
+     deleteCardInfo , deleteBoardInfo, cardCompletedInfo , updateTaskId,getSite};
