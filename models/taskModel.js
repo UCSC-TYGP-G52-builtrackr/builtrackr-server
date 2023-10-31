@@ -39,9 +39,17 @@ const deleteTask = async (id) => {
   }
 };
 const TaskOfSupervisor = async (employeeId) => {
-  const taskQuery = "SELECT * FROM activity WHERE employee_id = $1 AND status = '0'";
+  const taskQuery = 
+    `SELECT t.task_id AS "task_id",
+    t.taskname AS "title",
+    t.specialinformation AS "content",
+    t.status AS "Status",
+    c."supervisorId" AS "Supervisor_Id"
+    FROM "tasks" t
+    INNER JOIN "Card" c ON t.task_id = c."taskId"
+    WHERE c."supervisorId" = $1 AND t.status = $2`;
   try {
-    const result = await query(taskQuery, [employeeId]);
+    const result = await query(taskQuery, [employeeId,'0']);
     if (result.rowCount > 0) {
       return result.rows;
     } 
@@ -50,10 +58,14 @@ const TaskOfSupervisor = async (employeeId) => {
   }
 };
 
-const TaskOfSupervisorProof = async (taskId,imageName,comment) => {
-  const taskQuery = "Update activity SET image=$1, comment=$2, status='1' WHERE id=$3";
+const TaskOfSupervisorProof = async (taskId,imageName) => {
+  const taskQuery = 
+  `UPDATE "Card"
+  SET image = $1
+  WHERE "taskId" = $2;`;
   try {
-    const result = await query(taskQuery, [imageName,comment,taskId]);
+    const result = await query(taskQuery, [imageName,taskId]);
+    console.log(result.rowCount)
     if (result.rowCount > 0) {
       return result.rowCount;
     } 
