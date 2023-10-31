@@ -97,7 +97,7 @@ const fetchAllCustomers = asyncHandler(async () => {
 const checkCustDetails = asyncHandler(async (email, password) => {
   try {
     const customerQuery = "SELECT * FROM customer WHERE cust_email = $1"
-    const employeeQuery = "SELECT * FROM employee WHERE email = $1 AND type = 3";
+    const employeeQuery = "SELECT * FROM employee WHERE email = $1 AND type = 5";
 
     //customer authentication
     const customerResult = await query(customerQuery, [email]);
@@ -116,7 +116,7 @@ const checkCustDetails = asyncHandler(async (email, password) => {
     if (employeeResult.rows.length > 0) {
       const employee = employeeResult.rows[0];
       if (password === employee.password) {
-        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor' };
+        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor',employeeName: employee.f_name };
       } else {
         return { success: false, message: 'Incorrect password' };
       }
