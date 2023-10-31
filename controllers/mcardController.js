@@ -3,7 +3,7 @@ import { query } from "../config/db.js";
 // Define the getAllMaterials function
 export const getAllMaterials = async (req, res) => {
   try {
-    const result = await query('SELECT * FROM material');
+    const result = await query('SELECT * FROM material order by material_id');
     const materials = result.rows;
     res.json(materials);
   } catch (error) {

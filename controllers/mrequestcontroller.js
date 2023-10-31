@@ -3,7 +3,7 @@ import { query } from "../config/db.js";
 // Define the getAllMaterials function
 export const getAllMaterialRequests = async (req, res) => {
   try {
-    const result = await query('SELECT * FROM material_request');
+    const result = await query('SELECT * FROM material_request order by request_id desc');
     const material_requests = result.rows;
     res.json(material_requests);
   } catch (error) {
@@ -28,13 +28,13 @@ export const approveMaterialRequest = async (req, res) => {
     const { material_id, req_quantity } = requestResult[0];
 
     // Update the status in the material_request table
-    await query('UPDATE material_request SET status = \$1 WHERE request_id = \$2', ['approved', requestId]);
+    await query('UPDATE material_request SET status = \$1 WHERE request_id = \$2', ['Approved', requestId]);
 
     // Deduct the requested quantity from the material table
     const materialQuery = 'UPDATE material SET quantity = quantity - \$1 WHERE material_id = \$2';
     await query(materialQuery, [req_quantity, material_id]);
 
-    res.json({ message: 'Request approved successfully' });
+    res.json({ message: 'Request Approved successfully' });
   } catch (error) {
     console.error('Error updating material request:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -45,8 +45,8 @@ export const approveMaterialRequest = async (req, res) => {
 export const rejectMaterialRequest = async (req, res) => {
   try {
     const requestId = req.params.requestId; // Extract the request ID from the request parameters
-    await query('UPDATE material_request SET status = $1 WHERE request_id = $2', ['rejected', requestId]);
-    res.json({ message: 'Request rejected successfully' });
+    await query('UPDATE material_request SET status = $1 WHERE request_id = $2', ['Rejected', requestId]);
+    res.json({ message: 'Request Rejected successfully' });
   } catch (error) {
     console.error('Error updating material request:', error);
     res.status(500).json({ error: 'Internal server error' });

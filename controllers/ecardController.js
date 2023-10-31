@@ -46,7 +46,7 @@ import { query } from "../config/db.js";
 // Define the getAllMaterials function
 export const getAllEquipments = async (req, res) => {
   try {
-    const result = await query('SELECT * FROM equipment');
+    const result = await query('SELECT * FROM equipment order by equipment_id');
     const equipments = result.rows;
     res.json(equipments);
   } catch (error) {
@@ -84,13 +84,38 @@ export const addEquipment = async (req, res) => {
   }
 };
 
+// export const deleteEquipment = async (req, res) => {
+//   try {
+//     const { equipment_id } = req.params;
+
+//     const sql = `
+//       DELETE FROM equipment
+//       WHERE equipment_id = $1
+//     `;
+
+//     const values = [equipment_id];
+
+//     const result = await query(sql, values);
+
+//     if (result.rowCount === 1) {
+//       res.json({ message: 'Equipment deleted successfully' });
+//     } else {
+//       res.status(404).json({ error: 'Equipment not found' });
+//     }
+//   } catch (error) {
+//     console.error('Error executing query:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+
+
 export const deleteEquipment = async (req, res) => {
   try {
-    const { equipment_id } = req.params;
+    const { equipment_id } = req.body; // Change this line
 
     const sql = `
       DELETE FROM equipment
-      WHERE equipment_id = $1
+      WHERE equipment_id = \$1
     `;
 
     const values = [equipment_id];
@@ -107,8 +132,6 @@ export const deleteEquipment = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-
 
 
 
