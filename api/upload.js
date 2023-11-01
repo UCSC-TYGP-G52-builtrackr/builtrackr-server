@@ -25,6 +25,7 @@ uploadRouter.post("", upload.single("document"), (req, res) => {
 // });
 
 uploadRouter.post("/employee", (req, res) => {
+  console.log(req.body)
   upload1.single("image")(req, res, (err) => {
     if (err) {
       // Handle the upload error

@@ -1,9 +1,9 @@
 import { query } from '../config/db.js'
 
-const leaveRequest= async (option,name,start,end,note) => {
+const leaveRequest= async (id,Lname,start,end,note, name) => {
     try {
-        const leaveRequestQuery = 'INSERT INTO leave_employee (e_name, type, start_date,end_date, note) VALUES ($1, $2, $3,$4,$5) RETURNING e_name, type, start_date,end_date, note'
-        const queryResult = await query(leaveRequestQuery , [option,name,start,end,note])
+        const leaveRequestQuery = 'INSERT INTO laborleave (labor_id, labor_name, leave_start_date, leave_end_date, description,"Category") VALUES ($1, $2, $3,$4,$5 ,$6) RETURNING *'
+        const queryResult = await query(leaveRequestQuery , [id,Lname,start,end,note,name])
         return queryResult.rows[0]
     } catch (error) {
         console.error(`Error sending request: ${error.message}`)
@@ -12,4 +12,4 @@ const leaveRequest= async (option,name,start,end,note) => {
 }
 
 
-export {leaveRequest};
+export {leaveRequest}

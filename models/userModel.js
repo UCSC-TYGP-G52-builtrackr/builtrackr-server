@@ -18,56 +18,56 @@ const loginUser = asyncHandler(async (email, password) => {
   const userDetailsQuery = "SELECT * FROM users WHERE company_email = $1";
   const employeeDetailsQuery =
     "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
-  console.log("1")
+  console.log("1");
   try {
     const userDetails = await query(userDetailsQuery, [email]);
     const employeeDetails = await query(employeeDetailsQuery, [email]);
-console.log("2")
+    console.log("2");
     if (userDetails.rowCount > 0) {
-      console.log("3")
+      console.log("3");
       const user = userDetails.rows[0];
       const matchPassword = await bcrypt.compare(password, user.password);
       if (matchPassword) {
-        console.log("4")
+        console.log("4");
         return user;
       } else {
-        console.log("5")
+        console.log("5");
         return "Password was Incorect";
       }
     } else if (employeeDetails.rowCount > 0) {
-      console.log("6")
+      console.log("6");
       const employee = employeeDetails.rows[0];
       const matchPassword2 = await bcrypt.compare(password, employee.password);
       if (matchPassword2) {
-        console.log("7")
+        console.log("7");
         return employee;
       } else {
-        console.log("8")
+        console.log("8");
         return "Password was Incorect";
       }
     } else {
-      console.log("9")
+      console.log("9");
       const employeeDetailsQuery2 =
         "SELECT *,'HR Manager' AS role_name FROM employee  WHERE email = $1";
       try {
         console.log("10");
         const employeeDetails2 = await query(employeeDetailsQuery2, [email]);
         if (employeeDetails2.rowCount > 0) {
-          console.log("11")
+          console.log("11");
           const employee2 = employeeDetails2.rows[0];
           const matchPassword3 = await bcrypt.compare(
             password,
             employee2.password
           );
           if (matchPassword3) {
-            console.log("12")
+            console.log("12");
             return employee2;
           } else {
-            console.log("13")
+            console.log("13");
             return "Password was Incorect";
           }
         } else {
-          console.log("14")
+          console.log("14");
           return "Email does not exist";
         }
       } catch (err) {
@@ -75,7 +75,7 @@ console.log("2")
       }
     }
   } catch (err) {
-    console.log("15")
+    console.log("15");
     throw new Error("Internal Error");
   }
 });
@@ -93,29 +93,44 @@ const regUser = asyncHandler(
     username,
     password,
     company_id,
-    type
+    plan
   ) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const createUserQuery =
-      "INSERT INTO users (company_name ,reg_no ,br_path ,company_email ,address_line_1 ,address_line_2 ,tel_no ,user_name ,password,type ) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) RETURNING company_id, company_name, company_email";
+    let sites;
+    let amount;
+    if (plan === 1) {
+      sites = 2;
+      amount = 5000;
+    } else if (plan == 2) {
+      sites = 5;
+      amount = 20000;
+    } else if (plan === 3) {
+      sites = 20;
+      amount = 30000;
+    }
 
-    const createUser = await query(createUserQuery, [
-      name,
-      regNo,
-      "nameofphoto",
-      email,
-      line1,
-      line2,
-      contactNo,
-      username,
-      hashedPassword,
-      type,
-    ]);
+    const createUser = await query(
+      "SELECT insert_user_and_payment($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12,$13)",
+      [
+        name,
+        regNo,
+        "nameofphoto",
+        email,
+        line1,
+        line2,
+        contactNo,
+        username,
+        hashedPassword,
+        1,
+        sites,
+        1,
+        amount,
+      ]
+    );
+
     if (createUser.rowCount > 0) {
-      // Upload file
-      // upload.single(certificate);
       return createUser.rows[0];
     } else {
       throw new Error("Internal Error");
@@ -222,6 +237,61 @@ const rolePrivileges = asyncHandler(async (id) => {
     throw new Error("Internal error");
   }
 });
+const checkEmailType = asyncHandler(async (email) => {
+  const query1 = "Select * from users where company_email=$1";
+  const query2 = "Select * from employee where email=$1";
+  try {
+    const result1 = await query(query1, [email]);
+    const result2 = await query(query2, [email]);
+
+    if (result1.rowCount > 0) {
+      return 1;
+    } else if (result2.rowCount > 0) {
+      return 2;
+    }
+  } catch (err) {
+    throw new Error("Internal Error");
+  }
+});
+
+const resetUserPassword = asyncHandler(async (email, password, type) => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+  try {
+    if (type === 1) {
+      const result = await query(
+        "UPDATE users SET password = $1 WHERE company_email =$2",
+        [hashedPassword, email]
+      );
+      return result;
+    } else if (type == 2) {
+      const result = await query(
+        "UPDATE employee SET password = $1 WHERE email =$2",
+        [hashedPassword, email]
+      );
+      return result;
+    }
+  } catch (err) {
+    throw new Error("Internal Error");
+  }
+});
+
+const siteAddons = asyncHandler(async (company_id, amount) => {
+  const addQuery =
+    "INSERT INTO payment (company_id, type, sites, currente, amount) VALUES ($1,$2,$3,$4,$5)";
+  try {
+    const result = await query(addQuery, [
+      company_id,
+      2,
+      amount / 5000,
+      1,
+      amount,
+    ]);
+    return result;
+  } catch (err) {
+    throw new Error("Internal Error");
+  }
+});
 
 export {
   userExists,
@@ -234,4 +304,7 @@ export {
   allPrivileges,
   userRoles,
   rolePrivileges,
+  checkEmailType,
+  resetUserPassword,
+  siteAddons,
 };

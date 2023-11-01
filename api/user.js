@@ -11,6 +11,9 @@ import {
   getPrivileges,
   createUserRole,
   getRolePrivileges,
+  emailType,
+  resetPassword,
+  siteAddon,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { upload } from "../utils/multer.js";
@@ -22,7 +25,10 @@ userRouter.post("/getUserRoles", getUserRoles);
 userRouter.post("/addUserRole", upload.single("photo"), createUserRole);
 userRouter.post("/privileges", getPrivileges);
 userRouter.post("/rolePrivileges", getRolePrivileges);
-userRouter.post("/userExists",existUser)
+userRouter.post("/userExists", existUser);
+userRouter.post("/emailType", emailType);
+userRouter.post("/resetPassword", resetPassword);
+userRouter.post("/siteAddon", siteAddon);
 userRouter
   .route("/profile")
   .get(protect, getUserProfile)
@@ -69,4 +75,25 @@ userRouter.post("/verifyotp", (req, res) => {
     res.status(500).send("Invalid OTP");
   }
 });
+
+userRouter.post("/sendResetOTP", (req, res) => {
+  const { email, OTP } = req.body;
+  console.log(req.body);
+
+  var options = {
+    from: "builtrackrverifyn@gmail.com",
+    to: `${email}`,
+    subject: "Verify OTP ",
+    html: `<p>Enter the otp: ${OTP} to verify your email address for the reset your password</p>`,
+  };
+
+  transporter.sendMail(options, function (error, info) {
+    if (error) {
+      res.status(500).send("Internal error");
+    } else {
+      res.status(200).send("OK");
+    }
+  });
+});
+
 export { userRouter };

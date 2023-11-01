@@ -1,5 +1,5 @@
 import { addBoard , getBoard ,addCard, getCard , 
-    deleteCardInfo , deleteBoardInfo, cardCompletedInfo,updateTaskId} from '../controllers/kanbanboardController.js';
+    deleteCardInfo , deleteBoardInfo, cardCompletedInfo,updateTaskId,getSite} from '../controllers/kanbanboardController.js';
 import {router as kanbanboardRouter} from './index.js';
 
 
@@ -11,6 +11,7 @@ kanbanboardRouter.delete('/deleteCard/:id', deleteCardInfo);
 kanbanboardRouter.delete('/deleteBoard/:id', deleteBoardInfo);
 kanbanboardRouter.post('/cardCompleted', cardCompletedInfo);
 kanbanboardRouter.post('/updateTaskId', updateTaskId);
+kanbanboardRouter.get('/getSite', getSite);
 
 
 

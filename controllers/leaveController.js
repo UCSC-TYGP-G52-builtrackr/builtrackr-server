@@ -4,12 +4,13 @@ import {leaveRequest} from '../models/leaveModel.js';
 
 
 const LeaveRequest = asyncHandler(async (req, res) => {
-    const { option,name,start,end,note } = req.body
-    const request = await leaveRequest(option,name,start,end,note)
+    const { id,Lname,start,end,note, name } = req.body
+    const request = await leaveRequest( id,Lname,start,end,note, name)
     if (request) {
         res.status(200).json({
-            name: request.option,
-            type: request.name,
+            id: request.id,
+            Name: request.Lname,
+            type: request.category,
             start:request.start,
             end:request.end,
             note: request.note,
