@@ -52,6 +52,9 @@ const TaskOfSupervisor = async (employeeId) => {
     const result = await query(taskQuery, [employeeId,'0']);
     if (result.rowCount > 0) {
       return result.rows;
+    }
+    else{
+      return 0
     } 
   } catch (error) {
     throw new Error("Internal error");
