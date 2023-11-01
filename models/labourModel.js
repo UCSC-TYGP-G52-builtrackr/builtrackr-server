@@ -100,7 +100,7 @@ const leaveData = async () => {
 
 const getData = async () => {
     try {
-        const getDataQuery = "SELECT * FROM labour";
+        const getDataQuery = "SELECT l.labourname,l.labourtype,s.sitename FROM labour l inner join site s on l.site_id = s.id";
         const queryResult = await query(getDataQuery);
         return queryResult.rows;
     } catch (error) {
@@ -132,6 +132,18 @@ const leaveCount = async () => {
 }
 
 
+const getLaborData = async (siteId) => {
+    
+    try {
+        const getLaborDataQuery = `SELECT labourer.*,sites.site_name FROM labourer INNER JOIN sites ON labourer.site_id =sites.site_id WHERE labourer.site_id =$1`;
+        const queryResult = await query(getLaborDataQuery,[siteId]);
+        console.log("labor data",queryResult.rows);
+        return queryResult.rows;
+    } catch (error) {
+        console.error(`Error getting labor data: ${error.message}`);
+        throw new Error(error.message);
+    }
+}
 
 
-export {viewRating, getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount, updateEmployee, updateRating};
+export {viewRating, getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount, updateEmployee, updateRating,getLaborData};
