@@ -10,7 +10,7 @@ import {
   ReassignTask,
   EachCountTask,
   EachCompletedCountTask
-} from "../controllers/taskController.js";
+,SupervisorTask,SupervisorTaskProof} from "../controllers/taskController.js";
 
 taskRouter.post("/addtask", AddTask);
 
@@ -32,5 +32,9 @@ taskRouter.get("/eachtaskcount/:siteId", EachCountTask);
 
 taskRouter.get("/eachcompletedcount/:siteId", EachCompletedCountTask);
 
+
+//passing url from frontend
+taskRouter.post('/getTaskOfSupervisor', SupervisorTask)
+taskRouter.post('/addTaskProofOfSupervisor', SupervisorTaskProof)
 
 export { taskRouter };

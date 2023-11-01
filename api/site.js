@@ -31,5 +31,5 @@ siteRouter.post("/unassignSiteManager", unassignSiteManager);
 siteRouter.post("/getAllManagers", getAllManagers);
 siteRouter.post("/getManagerDetails", getManagerDetails);
 siteRouter.post("/siteCountOfPeriod", siteCountOfPeriod);
-
+siteRouter.post("/getSiteDetails", getSiteDetails);
 export { siteRouter };

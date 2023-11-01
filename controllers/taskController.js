@@ -1,3 +1,4 @@
+import asyncHandler from "express-async-handler";
 import {
   addTask,
   getAllTasks,
@@ -5,11 +6,12 @@ import {
   taskCount,
   taskCompletion,
   rejectTask,
+  TaskOfSupervisor, 
+  TaskOfSupervisorProof,
   reassignTask,
   eachTaskCount,
   eachCompletedTaskCount,
 } from "../models/taskModel.js";
-import asyncHandler from "express-async-handler";
 
 const AddTask = asyncHandler(async (req, res) => {
   const { taskName, specialInformation, dueDate, siteID, siteName } = req.body;
@@ -58,6 +60,34 @@ const DeleteTask = asyncHandler(async (req, res) => {
   }
 });
 
+const SupervisorTask = asyncHandler(async (req, res) => {
+  const { employeeNo } = req.body;
+  try {
+    const result = await TaskOfSupervisor(employeeNo);
+    console.log("reds",result)
+        res.status(200).json(result)
+  } catch (err) {
+    res.status(500).json(err)
+    console.log(err)
+  }
+});
+
+const SupervisorTaskProof = asyncHandler(async (req, res) => {
+  const {taskId,imageName,comment} = req.body;
+  try {
+    const result = await TaskOfSupervisorProof(taskId,imageName,comment);//model name shouldn't equal to controller name
+    if(result !== "Not Data"){
+        res.status(200).json(result)
+    }else{
+        res.status(200).json("No Data")
+    }
+    console.log(result)
+  } catch (err) {
+    res.status(500).json(err)
+    console.log(err)
+  }
+});
+    
 const TaskCount = asyncHandler(async (req, res) => {
   const tasks = await taskCount();
   res.status(200).json(tasks); //tasks send to the front end
@@ -102,4 +132,6 @@ export {
   ReassignTask,
   EachCountTask,
   EachCompletedCountTask,
+  SupervisorTask, 
+  SupervisorTaskProof
 };

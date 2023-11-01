@@ -89,9 +89,8 @@ const fetchAllCustomers = asyncHandler(async () => {
 
 const checkCustDetails = asyncHandler(async (email, password) => {
   try {
-    const customerQuery = "SELECT * FROM customer WHERE cust_email = $1";
-    const employeeQuery =
-      "SELECT * FROM employee WHERE email = $1 AND type = 3";
+    const customerQuery = "SELECT * FROM customer WHERE cust_email = $1"
+    const employeeQuery = "SELECT * FROM employee WHERE email = $1 AND type = 5";
 
     //customer authentication
     const customerResult = await query(customerQuery, [email]);
@@ -115,12 +114,7 @@ const checkCustDetails = asyncHandler(async (email, password) => {
     if (employeeResult.rows.length > 0) {
       const employee = employeeResult.rows[0];
       if (password === employee.password) {
-        return {
-          success: true,
-          message: "Password is correct",
-          employeeID: employee.id,
-          userType: "supervisor",
-        };
+        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor',employeeName: employee.f_name };
       } else {
         return { success: false, message: "Incorrect password" };
       }
@@ -222,6 +216,18 @@ const siteCountOftime  = asyncHandler(async (company_id,f_date,t_date) => {
   }
 })
 
+//model for customer mobile sites
+const getSiteDetail = asyncHandler(async (siteId) => {
+  try {
+  const siteQuery = "Select * from sites s inner join customer c on s.site_id = c.site_id where c.cust_id = $1";
+  const result = await query(siteQuery, [siteId]);
+  return result.rows;
+  }
+  catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
 export {
   addSite,
   addCustomer,
@@ -235,6 +241,6 @@ export {
   assignManagerUpdate,
   unassignManagerUpdate,
   allManagers,
-  selectedManager,
+  selectedManager, getSiteDetail,
   siteCountOftime 
 };

@@ -14,6 +14,7 @@ import {
   allManagers,
   selectedManager,
   siteCountOftime,
+  getSiteDetail
 } from "../models/siteModel.js";
 
 const addNewSite = asyncHandler(async (req, res) => {
@@ -114,11 +115,21 @@ const getAllManagers = asyncHandler(async (req, res) => {
   res.status(200).json(result);
 });
 
-const getManagerDetails = asyncHandler(async (req, res) => {
-  const { employeeNo } = req.body;
-  const result = await selectedManager(employeeNo);
-  res.status(200).json(result);
-});
+  const getManagerDetails = asyncHandler(async (req, res) => {
+    const {
+      employeeNo
+    } = req.body;
+    const result = await selectedManager(employeeNo);
+    res.status(200).json(result);
+  });
+
+  const getSiteDetails = asyncHandler(async (req, res) => {
+    console.log(req.body);
+    const { id } = req.body;
+    const result = await getSiteDetail (id);
+    res.status(200).json(result);
+  });
+
 
 const siteCountOfPeriod = asyncHandler(async (req, res) => {
   const { company_id, f_date, t_date } = req.body;
@@ -144,6 +155,7 @@ export {
   assignSiteManager,
   unassignSiteManager,
   getAllManagers,
-  getManagerDetails,
+  getManagerDetails,getSiteDetails,
   siteCountOfPeriod,
+  getSiteDetails
 };
