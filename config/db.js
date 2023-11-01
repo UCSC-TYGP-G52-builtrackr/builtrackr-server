@@ -1,6 +1,6 @@
+import dotenv from 'dotenv'
 import pkg from 'pg'
 const { Pool } = pkg
-import dotenv from 'dotenv'
 dotenv.config()
 
 //database connection object
@@ -10,9 +10,9 @@ const pool = new Pool({
   database: process.env.DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false // Add this line to disable SSL certificate verification
-  }
+  // ssl: {
+  //   rejectUnauthorized: false // Add this line to disable SSL certificate verification
+  // }
 })
 
 const connectDB = async () => {

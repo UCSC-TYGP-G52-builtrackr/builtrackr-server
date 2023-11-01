@@ -3,10 +3,11 @@ import { query } from "../config/db.js";
 
 //insert board information
 export const insertBoard = async (board) => {
-    const { title ,companyId, supervisorId } = board;
+    const { title ,companyId, SupervisorId,siteId } = board;
+    console.log("board values",board);
     const result = await query(
-        'INSERT INTO "Board" (title, "companyId", "supervisorId") VALUES ($1, $2, $3) RETURNING title, "companyId", "supervisorId"',
-    [title, companyId, supervisorId] 
+        'INSERT INTO "Board" (title, "companyId", "supervisorId", "siteId") VALUES ($1, $2, $3,$4) RETURNING *',
+    [title, companyId, SupervisorId, siteId]
     );
     //insert query in express js
 
@@ -15,10 +16,11 @@ export const insertBoard = async (board) => {
 
 
 //get board information
-export const selectBoard = async () => {
+export const selectBoard = async (siteId) => {
+const siteNo  = 0;
     try{
-const viewBoardQuery = 'SELECT * FROM "Board"'
-const queryResult = await query(viewBoardQuery) 
+const viewBoardQuery = 'SELECT * FROM "Board" WHERE "siteId" = $1 or "siteId" = $2 '
+const queryResult = await query(viewBoardQuery,[siteId , siteNo]) 
 return queryResult.rows
     }catch(error){
         console.error(`Error viewing board: ${error.message}`)
@@ -28,10 +30,11 @@ return queryResult.rows
 
 
 export const insertCard = async (card) => {
-    const { title, date, companyId, supervisorId, boardId } = card;
+    const { title, date, companyId, SupervisorId, boardId,siteId } = card;
+    console.log("card values",card);
     const result = await query(
-        'INSERT INTO "Card"(title, date, "companyId", "supervisorId", "boardId") VALUES ($1, $2, $3,$4,$5) RETURNING title, date, "companyId", "supervisorId", "boardId"',
-    [title, date, companyId, supervisorId, boardId] 
+        'INSERT INTO "Card"(title, date, "companyId", "supervisorId", "boardId" , "siteId") VALUES ($1, $2, $3,$4,$5, $6) RETURNING title, date, "companyId", "supervisorId", "boardId" , "siteId" ',
+    [title, date, companyId, SupervisorId, boardId,siteId]
     );
     //insert query in express js
 
@@ -40,10 +43,12 @@ export const insertCard = async (card) => {
 
 
 //get board information
-export const selectCard = async () => {
+export const selectCard = async (siteId) => {
+    const siteid = siteId;
+    console.log("siteIdCardtest",siteId);
     try{
-const viewBoardQuery = 'SELECT *FROM "Card" ORDER BY id ASC'
-const queryResult = await query(viewBoardQuery)
+const viewBoardQuery = 'SELECT *FROM "Card"  WHERE "siteId" = $1 ORDER BY id ASC'
+const queryResult = await query(viewBoardQuery,[siteid])
 return queryResult.rows
     }catch(error){
         console.error(`Error viewing card: ${error.message}`)
@@ -104,8 +109,33 @@ export const updateTaskcardId = async (taskIdChange) => {
 }
 
 
+//get site id of employeeNo
+export const selectSiteId = async (employeeNo) => {
+    const  employee  = employeeNo.employeeNo;
+    console.log("employeeNo",employeeNo.employeeNo);
+    try{
+        const viewSiteQuery = 'SELECT * FROM sites WHERE supervisorid = $1'
+        const queryResult = await query(viewSiteQuery,[employee]) 
+        console.log("queryResult",queryResult.rows);
+        return queryResult.rows[0]
+            }catch(error){
+                console.error(`Error viewing board: ${error.message}`)
+                throw new Error(error.message)
+            }
+}
 
+
+
+export const siteDisplay = async (siteId) => {
+    try {
+      const sitesQuery = "SELECT site_addr FROM sites WHERE site_id = $1";
+      const result = await query(sitesQuery, [siteId]);
+      return result.rows;
+    } catch (err) {
+      throw new Error("Internal error");
+    }
+  };
 
 
 export default {insertBoard, selectBoard,insertCard, 
-    selectCard, deleteCard, deleteBoard,cardCompleted,updateTaskcardId}
+    selectCard, deleteCard, deleteBoard,cardCompleted,updateTaskcardId, selectSiteId , siteDisplay}

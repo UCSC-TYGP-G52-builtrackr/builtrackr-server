@@ -1,5 +1,5 @@
 import  {insertCardInfo,selectCardInfo, insertCardInfoTask,selectCardInfoTask,
-    updateCardInfoTask, updateCardInfoDescription, updateCardInfoTitle,updateCardInfoDate} from "../models/cardInfoModel.js";
+    updateCardInfoTask, updateCardInfoDescription, updateCardInfoTitle,updateCardInfoDate, removeLabel} from "../models/cardInfoModel.js";
 import asyncHandler from "express-async-handler";
 
 
@@ -128,9 +128,28 @@ export const updateCardDate = asyncHandler(async (req, res) => {
 
 });
 
+//delete label
+
+export const removelabel = asyncHandler(async (req, res) => {
+    const id = req.body.labelId;
+    console.log(req.body);
+    try {
+        const label = await removeLabel({
+            id
+        });
+        res.status(201).json({
+            status: true,
+        });
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }
+
+});
+
 
 
 
 
 export default { addCardInfo,getCardInfo,addCardInfoTask,
-    getCardInfoTask,updateCardInfo,updateCardInfoDesc,updateCardTitle,updateCardDate};
+    getCardInfoTask,updateCardInfo,updateCardInfoDesc,updateCardTitle,updateCardDate , removelabel};

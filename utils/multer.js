@@ -2,7 +2,7 @@
 import multer, {diskStorage} from 'multer';
 import path from 'path';
 
-const uploadDir = 'uploads';
+const uploadDir = 'uploads/';
 
 const storage = diskStorage({
     destination: function (req, file, cb) {
@@ -33,7 +33,17 @@ const storage = diskStorage({
   //   }
   // });  
 
-  const storage3 = diskStorage({
+  // const storage3 = diskStorage({
+  //   destination: function (req, file, cb) {
+  //     cb(null, 'uploads/taskproof/'); // Specify the destination directory for uploaded files
+  //   },
+  //   filename: function (req, file, cb) {
+  //     cb(null, Date.now() + '-' + file.originalname); 
+  //     // Customize the file name if needed
+  //   }
+  // });  
+
+  const storage4 = diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'uploads/taskproof/'); // Specify the destination directory for uploaded files
     },
@@ -46,9 +56,11 @@ const storage = diskStorage({
 const upload = multer({ storage: storage });
 const upload1 = multer({ storage: storage1 });
 const upload3 = multer({ storage: storage3 });
+const upload4 = multer({ storage: storage4 });
 
 
-const uploadDir2 = 'uploads/Supervisor/';
+
+const uploadDir2 = 'uploads/Supervisor/uploads';
 
 const storage2 = diskStorage({
     destination: function (file,req, cb) {
@@ -61,9 +73,24 @@ const storage2 = diskStorage({
     },
 });
 
-
 const upload2 = multer({ storage: storage2 });
 
 
+const uploadDir3 = 'uploads/Documents/';
 
-export { upload,upload1,upload2,upload3}
+const storage3 = diskStorage({
+  destination: function (file,req, cb) {
+
+    const uploadPath = path.join(uploadDir3);
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+export { upload,upload1,upload2,upload3,upload4}
+
+
+
+

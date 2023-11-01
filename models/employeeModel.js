@@ -13,10 +13,12 @@ const employeeExists = async (email) => {
   }
 };
 const employeeExistByType = async (type, company_id) => {
+  console.log("type ", type, " id ", company_id);
   try {
     const userExistsQuery =
       "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
     const userExists = await query(userExistsQuery, [company_id, type]);
+    console.log(userExists.rows);
 
     return userExists.rowCount > 0 ? true : false;
   } catch (error) {
@@ -177,11 +179,14 @@ const addLaboures = async (
   registerDate,
   address,
   company_id,
-  photo_path
+  photo_path,
+  labourerType
 ) => {
   try {
     const addLabourer = await query(
-      "SELECT insert_labourer($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+      `INSERT INTO labourer (f_name, l_name, nic, tel_no, id, email, address, dob, register_date, company_id, photo_path,type_name)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12)
+      RETURNING no`,
       [
         fName,
         lName,
@@ -194,6 +199,7 @@ const addLaboures = async (
         registerDate,
         company_id,
         photo_path,
+        labourerType,
       ]
     );
 
@@ -212,7 +218,7 @@ const addLaboures = async (
 //     "SELECT e.*,r.role_name FROM employee AS e INNER JOIN user_roles as r ON e.company_id = r.company_id AND e.type = r.type  WHERE email = $1";
 //   try {
 //     const employeeDetails = await query(employeeDetailsQuery, [email]);
-    
+
 //     if (employeeDetails.rowCount > 0) {
 //       const employee = employeeDetails.rows[0];
 //       const matchPassword = await bcrypt.compare(password, employee.password);
@@ -283,7 +289,7 @@ const getAllLabourers = async (id) => {
 const getAllEmployeesDetails = async (id, type) => {
   const employeeDetailsQuery = `SELECT  	e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,e.photo_path,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type WHERE e.type = 1 and e.company_id = $1 
                                 UNION SELECT e.no,e.f_name ,e.l_name ,e.nic ,e.tel_no ,e.id ,e.email ,e.address ,e.dob ,e.register_date ,e.company_id ,e.type,e.photo_path,u.role_name FROM employee as e INNER JOIN user_roles AS u ON e.type=u.type AND e.company_id=u.company_id WHERE e.company_id = $1
-                                UNION SELECT *, 'Labourer' AS role_name from labourer where company_id = $1 `;
+                                UNION SELECT no,f_name,l_name,nic,tel_no,id,email,address,dob,register_date,company_id,type,photo_path, 'Labourer' AS role_name from labourer where company_id = $1 `;
   try {
     const employeeDetails = await query(employeeDetailsQuery, [id]);
     if (employeeDetails.rowCount > 0) {
@@ -329,6 +335,48 @@ const getEmployeesCount = async (id) => {
   }
 };
 
+const allLabourerTypes = async (id) => {
+  const labourerDetailsQuery =
+    "SELECT * FROM labourer_type WHERE company_id = $1 ";
+  try {
+    const labourerTypes = await query(labourerDetailsQuery, [id]);
+    return labourerTypes.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const addLabourerType = async (id, name) => {
+  const labourerDetailsQuery =
+    "INSERT INTO labourer_type (company_id,type_name) VALUES ($1,$2) RETURNING company_id";
+  try {
+    const labourerTypes = await query(labourerDetailsQuery, [id, name]);
+    return labourerTypes.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+const employeesOfSite = asyncHandler(async (company_id, site_id) => {
+  const siteEmployee = `SELECT no FROM employee WHERE company_id=$1 AND type=$2 UNION  SELECT supervisorid AS no FROM sites where site_id=$3`;
+  try {
+    const result = await query(siteEmployee, [company_id, 2, site_id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const employeesOfAprove = asyncHandler(async (site_id) => {
+  const siteEmployee = `SELECT employee_id AS no FROM site_manager WHERE site_id=$1 UNION  SELECT supervisorid AS no FROM sites where site_id=$1`;
+  try {
+    const result = await query(siteEmployee, [site_id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
 export {
   addEmployee,
   getEmployeesByType,
@@ -341,4 +389,8 @@ export {
   getEmployeesCount,
   addLaboures,
   getAllLabourers,
+  allLabourerTypes,
+  addLabourerType,
+  employeesOfSite,
+  employeesOfAprove,
 };

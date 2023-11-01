@@ -1,6 +1,24 @@
 import { router as siteRouter } from "./index.js";
 
-import { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager, getAllManagers, getManagerDetails, getSiteImage, getSiteAnalytics, getAllInManagers } from "../controllers/siteController.js";
+import {
+  addNewSite,
+  addNewCustomer,
+  getSitesToDisplay,
+  getSingleSiteData,
+  getAllCustomers,
+  checkCustomers,
+  getCustomerSites,
+  checkWhetherAssigned,
+  getManagers,
+  assignSiteManager,
+  unassignSiteManager,
+  getAllManagers,
+  getManagerDetails,
+  siteCountOfPeriod,
+  getSiteImage,
+  getSiteAnalytics,
+  getAllInManagers,
+} from "../controllers/siteController.js";
 
 siteRouter.post("/addSite", addNewSite);
 siteRouter.post("/getSites", getSitesToDisplay);
@@ -16,8 +34,9 @@ siteRouter.post("/assignSiteManager", assignSiteManager);
 siteRouter.post("/unassignSiteManager", unassignSiteManager);
 siteRouter.post("/getAllManagers", getAllManagers);
 siteRouter.post("/getManagerDetails", getManagerDetails);
+siteRouter.post("/siteCountOfPeriod", siteCountOfPeriod);
+siteRouter.post("/getSiteDetails", getSiteDetails);
 siteRouter.post("/getSiteImage", getSiteImage);
 siteRouter.post("/getSiteAnalytics", getSiteAnalytics);
 siteRouter.post("/getAllInManagers", getAllInManagers);
-
-export {siteRouter}
+export { siteRouter };

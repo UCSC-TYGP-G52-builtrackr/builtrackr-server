@@ -10,7 +10,6 @@ const addSite = async (
   siteAddr,
   companyID
 ) => {
-  
   const addSiteQuery =
     "INSERT INTO sites ( site_name, site_desc, site_type, client_id, site_addr, company_id ) VALUES ($1, $2, $3, $4, $5, $6)";
 
@@ -21,7 +20,7 @@ const addSite = async (
       siteType,
       siteClient,
       siteAddr,
-      companyID
+      companyID,
     ]);
 
     if (createSite.rowCount > 0) {
@@ -113,17 +112,22 @@ const fetchAllCustomers = asyncHandler(async (companyID) => {
 const checkCustDetails = asyncHandler(async (email, password) => {
   try {
     const customerQuery = "SELECT * FROM customer WHERE cust_email = $1"
-    const employeeQuery = "SELECT * FROM employee WHERE email = $1 AND type = 3";
+    const employeeQuery = "SELECT * FROM employee WHERE email = $1 AND type = 5";
 
     //customer authentication
     const customerResult = await query(customerQuery, [email]);
-    
+
     if (customerResult.rows.length > 0) {
       const customer = customerResult.rows[0];
       if (password === customer.cust_pwd) {
-        return { success: true, message: 'Password is correct', customerID: customer.cust_id, userType: 'customer' };
+        return {
+          success: true,
+          message: "Password is correct",
+          customerID: customer.cust_id,
+          userType: "customer",
+        };
       } else {
-        return { success: false, message: 'Incorrect password' };
+        return { success: false, message: "Incorrect password" };
       }
     }
 
@@ -132,13 +136,13 @@ const checkCustDetails = asyncHandler(async (email, password) => {
     if (employeeResult.rows.length > 0) {
       const employee = employeeResult.rows[0];
       if (password === employee.password) {
-        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor' };
+        return { success: true, message: 'Password is correct', employeeNo: employee.no, userType: 'supervisor',employeeName: employee.f_name };
       } else {
-        return { success: false, message: 'Incorrect password' };
+        return { success: false, message: "Incorrect password" };
       }
     }
-  // No record with the provided email was found in either table
-    return { success: false, message: 'User not found' };
+    // No record with the provided email was found in either table
+    return { success: false, message: "User not found" };
   } catch (err) {
     throw new Error("Internal error");
   }
@@ -156,7 +160,8 @@ const customerAllSites = asyncHandler(async (customerID) => {
 
 const checkAssigned = asyncHandler(async (siteId) => {
   try {
-    const checkAssignedQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e WHERE e.no IN (SELECT employee_id FROM site_manager WHERE site_id = $1)";
+    const checkAssignedQuery =
+      "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e WHERE e.no IN (SELECT employee_id FROM site_manager WHERE site_id = $1)";
     const result = await query(checkAssignedQuery, [siteId]);
     return result.rows;
   } catch (err) {
@@ -167,7 +172,8 @@ const checkAssigned = asyncHandler(async (siteId) => {
 
 const availManagers = asyncHandler(async (companyID) => {
   try {
-    const managersFetchQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.employee_id IS NULL OR (SELECT COUNT(DISTINCT employee_id) FROM site_manager WHERE employee_id = e.no) = 1) AND e.company_id = $1";
+    const managersFetchQuery =
+      "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.employee_id IS NULL OR (SELECT COUNT(DISTINCT employee_id) FROM site_manager WHERE employee_id = e.no) = 1) AND e.company_id = $1";
     // const managersFetchQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.site_id = 0 OR ( sm.site_id > 0  AND (SELECT COUNT(*) FROM site_manager sm2 WHERE sm2.employee_id = sm.employee_id AND sm2.site_id > 0) = 1))";
     const result = await query(managersFetchQuery, [companyID]);
     return result.rows;
@@ -179,7 +185,8 @@ const availManagers = asyncHandler(async (companyID) => {
 const assignManagerUpdate = asyncHandler(async (siteId, selectedPersonNo) => {
   try {
     // const updateSiteIDQuery = "UPDATE site_manager AS sm SET site_id = site_id + 1 WHERE employee_id = (SELECT e.no from employee AS e WHERE e.no = $1 AND e.company_id = $2)";
-    const updateSiteIDQuery = "INSERT INTO site_manager (employee_id, site_id) VALUES ($1, $2)";
+    const updateSiteIDQuery =
+      "INSERT INTO site_manager (employee_id, site_id) VALUES ($1, $2)";
     const result = await query(updateSiteIDQuery, [selectedPersonNo, siteId]);
     return result.rows;
   } catch (err) {
@@ -201,7 +208,8 @@ const unassignManagerUpdate = asyncHandler(async (siteId) => {
 const allManagers = asyncHandler(async (companyID) => {
   try {
     // const managersGetQuery = "SELECT * FROM employee WHERE type = 4 AND company_id = $1";
-    const managersGetQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name, COUNT(sm.employee_id) AS site_manager_count FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id WHERE e.type = 4 AND e.company_id = $1 GROUP BY e.no";
+    const managersGetQuery =
+      "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name, COUNT(sm.employee_id) AS site_manager_count FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id WHERE e.type = 4 AND e.company_id = $1 GROUP BY e.no";
     const result = await query(managersGetQuery, [companyID]);
     return result.rows;
   } catch (err) {
@@ -209,6 +217,29 @@ const allManagers = asyncHandler(async (companyID) => {
   }
 });
 
+
+const siteCountOftime  = asyncHandler(async (company_id,f_date,t_date) => {
+  try {
+    const sites = "Select * from sites WHERE company_id = $1 AND  started_date BETWEEN $2 AND $3"
+    const result = await query (sites, [company_id,f_date,t_date]);
+    console.log(result.rows)
+    return result.rowCount
+  } catch (errr) {
+    throw new Error("Internal error");
+  }
+})
+
+//model for customer mobile sites
+const getSiteDetail = asyncHandler(async (siteId) => {
+  try {
+  const siteQuery = "Select * from sites s inner join customer c on s.site_id = c.site_id where c.cust_id = $1";
+  const result = await query(siteQuery, [siteId]);
+  return result.rows;
+  }
+  catch (err) {
+    throw new Error("Internal error");
+  }
+});
 const allInManagers = asyncHandler(async (companyID) => {
   try {
     // const managersGetQuery = "SELECT * FROM employee WHERE type = 4 AND company_id = $1";
@@ -240,4 +271,20 @@ const siteAnalytics = asyncHandler(async (companyID) => {
   }
 });
 
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager, siteImagePath, siteAnalytics, allInManagers };
+export {
+  addSite,
+  addCustomer,
+  siteDisplay,
+  singleSiteDisplay,
+  fetchAllCustomers,
+  checkCustDetails,
+  customerAllSites,
+  checkAssigned,
+  availManagers,
+  assignManagerUpdate,
+  unassignManagerUpdate,
+  allManagers,
+  selectedManager, getSiteDetail,
+  siteCountOftime,
+  allManagers, selectedManager, siteImagePath, siteAnalytics, allInManagers 
+};
