@@ -1,5 +1,5 @@
 import { insertBoard,selectBoard, insertCard,selectCard, 
-    deleteCard, deleteBoard, cardCompleted, updateTaskcardId,selectSiteId} from "../models/kanbanboardModel.js";
+    deleteCard, deleteBoard, cardCompleted, updateTaskcardId,selectSiteId ,siteDisplay} from "../models/kanbanboardModel.js";
 import asyncHandler from "express-async-handler";
 
 
@@ -26,6 +26,19 @@ export const getBoard = asyncHandler(async (req, res) => {
     console.log("siteId",req.query.siteId);
     try {
         const siteId = await  selectBoard(siteid)
+        res.status(200).json(siteId);
+    } catch (err) {
+        console.log("here",err);
+        res.status(500).json({ error: err.message });
+    }    //tasks send to the front end
+
+})
+
+export const getSiteAddress = asyncHandler(async (req, res) => {
+    const siteid  = req.query.siteId;
+    console.log("siteId",req.query.siteId);
+    try {
+        const siteId = await  siteDisplay(siteid)
         res.status(200).json(siteId);
     } catch (err) {
         console.log("here",err);
@@ -164,4 +177,4 @@ export const getSite = asyncHandler(async (req, res) => {
 
 
 export default { addBoard,getBoard , addCard,getCard ,
-     deleteCardInfo , deleteBoardInfo, cardCompletedInfo , updateTaskId,getSite};
+     deleteCardInfo , deleteBoardInfo, cardCompletedInfo , updateTaskId,getSite ,getSiteAddress};
