@@ -13,7 +13,9 @@ import {
   unassignManagerUpdate,
   allManagers,
   selectedManager,
-  siteImagePath
+  siteImagePath,
+  siteAnalytics,
+  allInManagers
 } from "../models/siteModel.js";
 
 const addNewSite = asyncHandler(async (req, res) => {
@@ -120,6 +122,7 @@ const addNewSite = asyncHandler(async (req, res) => {
       siteId
     } = req.body;
     const result = await checkAssigned(siteId);
+    console.log("assigned check results", result);
     res.status(200).json(result);
   });
 
@@ -151,6 +154,14 @@ const addNewSite = asyncHandler(async (req, res) => {
     res.status(200).json(result);
   });
 
+  const getAllInManagers = asyncHandler(async (req, res) => {
+    const {
+      companyID
+    } = req.body;
+    const result = await allInManagers(companyID);
+    res.status(200).json(result);
+  });
+
   const getManagerDetails = asyncHandler(async (req, res) => {
     const {
       employeeNo
@@ -163,6 +174,14 @@ const addNewSite = asyncHandler(async (req, res) => {
     console.log(req.body);
     const { id } = req.body;
     const result = await getSiteDetail(id);
+    res.status(200).json(result);
+  });
+
+  const getSiteAnalytics = asyncHandler(async (req, res) => {
+    const {
+      companyID
+    } = req.body;
+    const result = await siteAnalytics(companyID);
     res.status(200).json(result);
   });
 
@@ -182,4 +201,4 @@ const addNewSite = asyncHandler(async (req, res) => {
   //   res.status(200).json(result);
   // });
 
-  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager, getAllManagers, getManagerDetails, getSiteImage };
+  export { addNewSite, addNewCustomer, getSitesToDisplay, getSingleSiteData, getAllCustomers, checkCustomers, getCustomerSites, checkWhetherAssigned, getManagers, assignSiteManager, unassignSiteManager, getAllManagers, getManagerDetails, getSiteImage, getSiteAnalytics, getAllInManagers };

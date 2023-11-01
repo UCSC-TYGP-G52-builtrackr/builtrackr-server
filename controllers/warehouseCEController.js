@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import {
     addWarehouseFunc,
     warehouseDisplay,
+    checkAssignedWarehouse,
     singleWarehouse,
     availWarehouseManagers,
     assignInvManagerUpdate,
@@ -42,6 +43,15 @@ import {
     res.status(200).json(result);
   });
 
+  const checkWhetherAssignedWarehouse = asyncHandler(async (req, res) => {
+    const {
+      warehouseId
+    } = req.body;
+    const result = await checkAssignedWarehouse(warehouseId);
+    console.log("assigned check results", result);
+    res.status(200).json(result);
+  });
+
   const getSingleWarehouse = asyncHandler(async (req, res) => {
     const { id } = req.body;
     const result = await singleWarehouse(id);
@@ -68,4 +78,4 @@ import {
     res.status(200).json(result);
   });
 
-  export { addWarehouse, getWarehouses, getSingleWarehouse, getWarehouseManagers, assignInvManager, unassignInvManager };
+  export { addWarehouse, getWarehouses, checkWhetherAssignedWarehouse, getSingleWarehouse, getWarehouseManagers, assignInvManager, unassignInvManager };

@@ -60,6 +60,16 @@ const warehouseDisplay = asyncHandler(async (companyID) => {
     }
   });
 
+  const checkAssignedWarehouse = asyncHandler(async (warehouseId) => {
+    try {
+      const checkWAssignedQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e WHERE e.no IN (SELECT employee_id FROM inventory_manager WHERE warehouse_id = $1)";
+      const result = await query(checkWAssignedQuery, [warehouseId]);
+      return result.rows;
+    } catch (err) {
+      throw new Error("Internal error");
+    }
+  });
+
   const assignInvManagerUpdate = asyncHandler(async (warehouseId, selectedPersonNo) => {
     try {
       const updateWarehouseIDQuery = "INSERT INTO inventory_manager (employee_id, warehouse_id) VALUES ($1, $2)";
@@ -81,4 +91,4 @@ const warehouseDisplay = asyncHandler(async (companyID) => {
     }
   });
 
-export { addWarehouseFunc, warehouseDisplay, singleWarehouse, availWarehouseManagers, assignInvManagerUpdate, unassignInvManagerUpdate };
+export { addWarehouseFunc, warehouseDisplay, singleWarehouse, availWarehouseManagers, assignInvManagerUpdate, unassignInvManagerUpdate, checkAssignedWarehouse };

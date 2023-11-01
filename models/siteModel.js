@@ -102,7 +102,7 @@ const siteImagePath = asyncHandler(async (id) => {
 
 const fetchAllCustomers = asyncHandler(async (companyID) => {
   try {
-    const custFetchQuery = "SELECT cust_id, CONCAT(cust_fname, ' ', cust_lname) AS cust_name FROM Customer";
+    const custFetchQuery = "SELECT cust_id, CONCAT(cust_fname, ' ', cust_lname) AS cust_name FROM Customer WHERE comp_id = $1";
     const result = await query(custFetchQuery, [companyID]);
     return result.rows;
   } catch (err) {
@@ -164,6 +164,7 @@ const checkAssigned = asyncHandler(async (siteId) => {
   }
 });
 
+
 const availManagers = asyncHandler(async (companyID) => {
   try {
     const managersFetchQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name FROM employee e LEFT JOIN site_manager sm ON e.no = sm.employee_id WHERE e.type = 4 AND (sm.employee_id IS NULL OR (SELECT COUNT(DISTINCT employee_id) FROM site_manager WHERE employee_id = e.no) = 1) AND e.company_id = $1";
@@ -208,6 +209,17 @@ const allManagers = asyncHandler(async (companyID) => {
   }
 });
 
+const allInManagers = asyncHandler(async (companyID) => {
+  try {
+    // const managersGetQuery = "SELECT * FROM employee WHERE type = 4 AND company_id = $1";
+    const InmanagersGetQuery = "SELECT e.*, CONCAT(e.f_name, ' ', e.l_name) AS full_name, COUNT(sm.employee_id) AS site_manager_count FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id WHERE e.type = 4 AND e.company_id = $1 GROUP BY e.no";
+    const result = await query(InmanagersGetQuery, [companyID]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
 const selectedManager = asyncHandler(async (employeeNo) => {
   try {
     const managerGetQuery = "SELECT COUNT(sm.site_id) AS assigned_sites_count, STRING_AGG(s.site_name, ', ') AS assigned_site_names FROM employee AS e LEFT JOIN site_manager AS sm ON e.no = sm.employee_id LEFT JOIN sites AS s ON sm.site_id = s.site_id WHERE e.no = $1 GROUP BY e.no, e.f_name";
@@ -218,4 +230,14 @@ const selectedManager = asyncHandler(async (employeeNo) => {
   }
 });
 
-export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager, siteImagePath };
+const siteAnalytics = asyncHandler(async (companyID) => {
+  try {
+    const siteAnalyticsQuery = "SELECT * FROM sites WHERE company_id = $1";
+    const result = await query(siteAnalyticsQuery, [companyID]);
+    return result.rows;
+  } catch (err) {
+    throw new Error("Internal error");
+  }
+});
+
+export { addSite, addCustomer, siteDisplay, singleSiteDisplay, fetchAllCustomers, checkCustDetails, customerAllSites, checkAssigned, availManagers, assignManagerUpdate, unassignManagerUpdate, allManagers, selectedManager, siteImagePath, siteAnalytics, allInManagers };
