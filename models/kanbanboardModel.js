@@ -126,8 +126,16 @@ export const selectSiteId = async (employeeNo) => {
 
 
 
-
+export const siteDisplay = async (siteId) => {
+    try {
+      const sitesQuery = "SELECT site_addr FROM sites WHERE site_id = $1";
+      const result = await query(sitesQuery, [siteId]);
+      return result.rows;
+    } catch (err) {
+      throw new Error("Internal error");
+    }
+  };
 
 
 export default {insertBoard, selectBoard,insertCard, 
-    selectCard, deleteCard, deleteBoard,cardCompleted,updateTaskcardId, selectSiteId}
+    selectCard, deleteCard, deleteBoard,cardCompleted,updateTaskcardId, selectSiteId , siteDisplay}
