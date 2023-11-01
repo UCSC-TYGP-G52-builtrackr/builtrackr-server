@@ -13,10 +13,12 @@ const employeeExists = async (email) => {
   }
 };
 const employeeExistByType = async (type, company_id) => {
+  console.log("type ", type, " id ", company_id);
   try {
     const userExistsQuery =
       "SELECT * FROM employee WHERE company_id = $1 AND type = $2";
     const userExists = await query(userExistsQuery, [company_id, type]);
+    console.log(userExists.rows);
 
     return userExists.rowCount > 0 ? true : false;
   } catch (error) {
@@ -344,16 +346,36 @@ const allLabourerTypes = async (id) => {
   }
 };
 
-const addLabourerType = async (id,name) => {
+const addLabourerType = async (id, name) => {
   const labourerDetailsQuery =
     "INSERT INTO labourer_type (company_id,type_name) VALUES ($1,$2) RETURNING company_id";
   try {
-    const labourerTypes = await query(labourerDetailsQuery, [id,name]);
+    const labourerTypes = await query(labourerDetailsQuery, [id, name]);
     return labourerTypes.rows;
   } catch (err) {
     throw new Error(err);
   }
 };
+
+const employeesOfSite = asyncHandler(async (company_id, site_id) => {
+  const siteEmployee = `SELECT no FROM employee WHERE company_id=$1 AND type=$2 UNION  SELECT supervisorid AS no FROM sites where site_id=$3`;
+  try {
+    const result = await query(siteEmployee, [company_id, 2, site_id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const employeesOfAprove = asyncHandler(async (site_id) => {
+  const siteEmployee = `SELECT employee_id AS no FROM site_manager WHERE site_id=$1 UNION  SELECT supervisorid AS no FROM sites where site_id=$1`;
+  try {
+    const result = await query(siteEmployee, [site_id]);
+    return result.rows;
+  } catch (err) {
+    throw new Error(err);
+  }
+});
 
 export {
   addEmployee,
@@ -369,4 +391,6 @@ export {
   getAllLabourers,
   allLabourerTypes,
   addLabourerType,
+  employeesOfSite,
+  employeesOfAprove,
 };

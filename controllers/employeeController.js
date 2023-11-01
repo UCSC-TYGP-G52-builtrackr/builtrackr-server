@@ -14,7 +14,9 @@ import {
   addLaboures,
   getAllLabourers,
   allLabourerTypes,
-  addLabourerType
+  addLabourerType,
+  employeesOfSite,
+  employeesOfAprove,
 } from "../models/employeeModel.js";
 import generateToken from "../utils/generateTokens.js";
 
@@ -38,12 +40,14 @@ const existEmployee = asyncHandler(async (req, res) => {
   }
 });
 const existEmployeeByType = asyncHandler(async (req, res) => {
-  const { company_id, type } = req.body;
+  const { id, type } = req.body;
+  console.log(req.body);
 
   try {
-    const employeeExistType = await employeeExistByType(type, company_id);
+    const employeeExistType = await employeeExistByType(type, id);
+    console.log(employeeExistType);
     if (employeeExistType) {
-      res.status(201).json({
+      res.status(200).json({
         status: true,
       });
     } else {
@@ -57,13 +61,15 @@ const existEmployeeByType = asyncHandler(async (req, res) => {
 });
 const existEmployeeById = asyncHandler(async (req, res) => {
   const { company_id, employee_id } = req.body;
+  console.log(req.body);
   try {
     const employeeExistId = await employeeExistById(employee_id, company_id);
     if (employeeExistId) {
-      res.status(201).json({
+      res.status(200).json({
         status: true,
       });
     } else {
+      console.log("Done");
       res.status(201).json({
         status: false,
       });
@@ -312,10 +318,33 @@ const getLabourerTypes = asyncHandler(async (req, res) => {
 });
 
 const addLabourerTypes = asyncHandler(async (req, res) => {
-  const { company_id,name } = req.body;
+  const { company_id, name } = req.body;
   try {
-    const labourerTypes = await addLabourerType(company_id,name);
+    const labourerTypes = await addLabourerType(company_id, name);
     res.status(200).json(labourerTypes);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const siteEmployees = asyncHandler(async (req, res) => {
+  const { company_id, site_id } = req.body;
+  console.log(req.body);
+  try {
+    const result = await employeesOfSite(company_id, site_id);
+    res.status(200).json(result);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+const employeeForRequestAprove = asyncHandler(async (req, res) => {
+  const { site_id } = req.body;
+  console.log("request", req.body);
+  try {
+    const result = await employeesOfAprove(site_id);
+    console.log(result);
+    res.status(200).json(result);
   } catch (err) {
     throw new Error(err);
   }
@@ -336,4 +365,6 @@ export {
   getLabourers,
   getLabourerTypes,
   addLabourerTypes,
+  siteEmployees,
+  employeeForRequestAprove,
 };

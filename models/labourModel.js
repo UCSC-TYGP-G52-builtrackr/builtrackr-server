@@ -146,4 +146,4 @@ const getLaborData = async (siteId) => {
 }
 
 
-export {viewRating, getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount, updateEmployee, updateRating};
+export {viewRating, getLeaves,approveLeave,declineLeave,leaveData,getData,getStatus,leaveCount, updateEmployee, updateRating,getLaborData};

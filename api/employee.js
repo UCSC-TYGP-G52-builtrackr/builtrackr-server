@@ -17,6 +17,8 @@ import {
   getLabourers,
   getLabourerTypes,
   addLabourerTypes,
+  siteEmployees,
+  employeeForRequestAprove,
 } from "../controllers/employeeController.js";
 
 employeeRouter.post("/registerEmployee", registerEmployee);
@@ -32,6 +34,8 @@ employeeRouter.post("/EmployeeExistById", existEmployeeById);
 employeeRouter.post("/registerLabourer", addLabourer);
 employeeRouter.post("/getLabourers", getLabourers);
 employeeRouter.post("/addLabourerTypes", addLabourerTypes);
+employeeRouter.post("/siteEmployees", siteEmployees);
+employeeRouter.post("/employeeForRequestAprove",employeeForRequestAprove)
 
 employeeRouter.post("/hello", test);
 

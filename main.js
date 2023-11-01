@@ -29,7 +29,7 @@ import { laborRouter } from "./api/labor.js";
 import { iManagerRouter } from "./api/mCard.js";
 import { iManagerERouter } from "./api/eCard.js";
 import { iManagerMRRouter } from "./api/mRequest.js";
-import { iManagerERRouter } from './api/eRequest.js';
+import { iManagerERRouter } from "./api/eRequest.js";
 import { paymentRouter } from "./api/payment.js";
 dotenv.config();
 connectDB();
@@ -86,7 +86,7 @@ app.get("/config", (req, res) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   console.log(req.body);
-  const {amount} = req.body;
+  const { amount } = req.body;
   console.log(amount);
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -109,16 +109,10 @@ app.post("/create-payment-intent", async (req, res) => {
 });
 
 //sadun
-app.use('/api/material', iManagerRouter )
-app.use('/api/equipment', iManagerERouter)
-app.use('/api/mrequest', iManagerMRRouter)
-app.use('/api/erequest', iManagerERRouter)
-
-
-
-
-
-
+app.use("/api/material", iManagerRouter);
+app.use("/api/equipment", iManagerERouter);
+app.use("/api/mrequest", iManagerMRRouter);
+app.use("/api/erequest", iManagerERRouter);
 
 //rumindu
 
@@ -128,7 +122,6 @@ const addNewUser = (employeeNo, socketId) => {
   console.log("Adding new user:", employeeNo, socketId);
   !onlineUsers.some((user) => user.employeeNo === employeeNo) &&
     onlineUsers.push({ employeeNo, socketId });
-  console.log(onlineUsers);
 };
 
 const removeUser = (socketId) => {
@@ -148,17 +141,40 @@ io.on("connection", (socket) => {
     console.log(socket.id);
     addNewUser(employeeNo, socket.id);
   });
+  
 
-  socket.on("sendTaskNotification", ({ reciver, sender }) => {
-    const toUser = getUser(reciver);
-    console.log(reciver, sender);
-    io.to(toUser?.socketId).emit("getTaskNotification", {
-      sender: sender,
-      reciver: reciver,
-      msg: "Task 01 added for you.",
+  socket.on("sendEquipmentNotification", ({ reciver, sender }) => {
+    console.log(reciver)
+    reciver.map((el) => {
+      const toUser = getUser(el.no);
+      console.log(el.no, sender);
+      io.to(toUser?.socketId).emit("getEquipmentNotification", {
+        sender: sender,
+        reciver: el.no,
+        msg: "Equipment Add",
+      });
     });
-    console.log(onlineUsers);
+
   });
+
+  socket.on("sendEquipmentAcceptNotification", ({ reciver, sender }) => {
+    console.log("reciver",reciver)
+    reciver.map((el) => {
+      const toUser = getUser(el.no);
+      console.log(el.no, sender);
+      io.to(toUser?.socketId).emit("getEquipmentAcceptNotification", {
+        sender: sender,
+        reciver: el.no,
+        msg: "Equipment Request Approved",
+      });
+    });
+
+  });
+
+  socket.on("sendMessage", (data) =>{
+    socket.emit("receiveMessage",data)
+  })
+  
 
   // io.emit("First event", "This a test")
 
@@ -168,7 +184,7 @@ io.on("connection", (socket) => {
 });
 
 const port = process.env.PORT;
-server.listen(port,() => {
+server.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
 
