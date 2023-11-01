@@ -135,7 +135,7 @@ const leaveCount = async () => {
 const getLaborData = async (siteId) => {
     
     try {
-        const getLaborDataQuery = `SELECT * FROM labourer WHERE site_id =$1`;
+        const getLaborDataQuery = `SELECT labourer.*,sites.site_name FROM labourer INNER JOIN sites ON labourer.site_id =sites.site_id WHERE labourer.site_id =$1`;
         const queryResult = await query(getLaborDataQuery,[siteId]);
         console.log("labor data",queryResult.rows);
         return queryResult.rows;

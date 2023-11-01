@@ -89,7 +89,7 @@ const GetIds = asyncHandler(async (req, res) => {
 );
 
 const GetSupervisor = asyncHandler(async (req, res) => {
-  const siteId=req.params.siteId;
+  const siteId=req.params.id;
   const sites = await getSupervisor(siteId);
   res.status(200).json(sites); //tasks send to the front end
 }

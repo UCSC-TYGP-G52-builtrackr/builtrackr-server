@@ -13,7 +13,7 @@ siteManagerRouter.post('/assignequipment', AssignEquipment)
 siteManagerRouter.get('/getmaterial', GetMaterial)
 siteManagerRouter.post('/assignmaterial', AssignMaterial)
 siteManagerRouter.get('/getsiteids/:id',GetIds)
-siteManagerRouter.get('/getsupervisor',GetSupervisor)
+siteManagerRouter.get('/getsupervisor/:id',GetSupervisor)
 
 
 export {siteManagerRouter}
