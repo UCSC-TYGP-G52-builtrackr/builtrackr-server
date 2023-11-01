@@ -53,7 +53,7 @@ app.use("/api/sitemanager", siteManagerRouter);
 app.use("/api/upload", uploadRouter);
 // app.use('/api/payment', paymentRouter);
 app.use('/api/labourleave',labourLeaveRouter)
-app.use('/api/labor',laborRouter);
+
 
 
 
